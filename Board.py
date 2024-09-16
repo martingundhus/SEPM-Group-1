@@ -12,5 +12,14 @@ class Board:
         self.grid[x][y] = addStone() #Stack group write this!
 
     def moveStone(self, xFrom, yFrom, xTo, yTo):
+        if (xFrom > xTo):
+            checkLeft()
+        else:
+            checkRight()
+        if (yFrom > yTo):
+            checkDown()
+        else:
+            checkUp()
+
         self.grid[xFrom][yFrom] = removeStone() #Stack group write this!
         self.grid[xTo][yTo] = addStone()

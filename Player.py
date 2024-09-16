@@ -14,3 +14,6 @@ class Player:
             self.stonesLeft -= 1
         else:
             raise TypeError("No stones left")
+    
+    def getRemaining(self):
+        return self.stonesLeft
