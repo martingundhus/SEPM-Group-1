@@ -9,7 +9,7 @@ class TestStone(unittest.TestCase):
 
     # Testing if stone is created with correct properties
     def test_stone_properties(self):
-        self.assertEqual(self.stone.player, 1, "Stone should be 1")
+        self.assertEqual(self.stone.player_index, 1, "Stone should be 1")
         self.assertFalse(self.stone.upright, "Upright should be False")
         self.stone.upright = True
         self.assertTrue(self.stone.upright, "Upright should be True")
@@ -75,8 +75,8 @@ class TestStack(unittest.TestCase):
         #self.assertEqual(next_stack.stack_content)
         test_content = []
         for stone in next_stack.stack_content:
-            print(f"Stone(player={stone.player}, upright={stone.upright})")
-            test_content.append([stone.player, stone.upright])
+            print(f"Stone(player={stone.player_index}, upright={stone.upright})")
+            test_content.append([stone.player_index, stone.upright])
         print(test_content)
         self.assertEqual(test_content, [[1, False], [2, False], [1, False]])
        # next_stack.push_stone()
@@ -95,4 +95,4 @@ class TestStack(unittest.TestCase):
         
 if __name__ == "__main__":
     unittest.main()
-         
+       

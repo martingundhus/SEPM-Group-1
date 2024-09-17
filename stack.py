@@ -10,23 +10,16 @@ class Stack:
     def height(self):
         return len(self.stack_content)
 
-    def check_top_stone(self, player):
+    def check_top_stone(self, player_index):
         '''Checks if top stone belongs to player'''
         topstone = self.stack_content[-1]
-        if topstone.player == player:
+        if topstone.player_index == player_index:
             return True
         return False
 
-    # '''Checks if topstone is standing or flat'''
-    # def check_push_stone(self,):
-    #     topstone = self.stack_content[-1]
-    #     if topstone.upright == False:
-    #         return True
-    #     return False
-
     '''Pushes a stone from a players hand on the stack in a flat or standing stance'''
-    def push_stone(self, player, upright_input):
-        new_stone = stone.Stone(player)
+    def push_stone(self, player_index, upright_input):
+        new_stone = stone.Stone(player_index)
         if upright_input == True:
             new_stone.upright = True
             self.stackable = False
