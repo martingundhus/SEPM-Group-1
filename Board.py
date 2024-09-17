@@ -1,4 +1,7 @@
-import Game
+import game
+import stone
+import stack
+import player
 
 class Board:
     def __init__(self, board_size, grid):
@@ -8,71 +11,63 @@ class Board:
     def createBoard(self):
         for x in range(self.board_size):
             for y in range(self.board_size):
-                self.grid[x][y] = CreateStack() #Stack group write this!
+                self.grid[x][y] = stack.Stack() #Stack group write this!
 
     def getStack(self, x, y):
         return self.grid[x][y]
 
-    def placeStone(self, x, y):
-        self.grid[x][y] = addStone() #Stack group write this!
+    def placeStone(self, x, y, upright_input, player_index):
+        self.grid[x][y] = stack.Stack.push_stone(player_index, upright_input)  #Stack group write this!
 
     def checkLeft(self, x, y):
-        if x == 0:
+        if (x != 0 and self.grid[x-1][y].stack.Stack.stackable):
+            return True
+        else:
             return False
-        else: 
-            if (self.grid[x-1][y] != isTopStoneStanding):
-                return True
-            else:
-                return False
             
     def checkRight(self, x, y):
-        if x == 4:
-            return False
+        if ( x != 4 and self.grid[x+1][y].stack.Stack.stackable):
+            return True
         else:
-            if (self.grid[x+1][y] != isTopStoneStanding):
-                return True
-            else:
-                return False
+            return False
 
     def checkDown(self, x, y):
-        if y == 0:
-            return False
+        if (y != 0 and self.grid[x][y-1].stack.Stack.stackable):
+            return True
         else:
-            if (self.grid[x][y-1] != isTopStoneStanding):
-                return True
-            else:
-                return False
+            return False
 
     def checkUp(self, x, y):
-        if y == 4:
-            return False
-        else:
-            if (self.grid[x][y+1] != isTopStoneStanding):
-                return True
-            else:
-                return False
-
-
-    def enoughStones(self, stack):
-        if (height(stack) >= 2):  # Stack Group have written this!
+        if (y != 4 and self.grid[x][y+1].stack.Stack.stackable):
             return True
+        else:
+            return False
+
+
+    def enoughStones(tileStack):
+        if (stack.Stack.height(tileStack) >= 2):  # Stack Group have written this!
+            return True
+        else:
+            return False
         
 
     def isValidMove(self, playerIndex, xFrom, xTo, yFrom, yTo):
-        if (Board.enoughStones(self, Board.getStack(xFrom, yFrom)) and check_top_stone(playerIndex)):
+        if (self.enoughStones(Board.getStack(xFrom, yFrom)) and check_top_stone(playerIndex)):
             if (xFrom > xTo):
-                if (Board.checkLeft(self, xFrom, yFrom)):
+                if (self.checkLeft(xFrom, yFrom)):
                      return True
             else:
-                if (Board.checkRight(self, xFrom, yFrom)):
+                if (self.checkRight(xFrom, yFrom)):
                      return True
             if (yFrom > yTo):
-                if (Board.checkDown(self, xFrom, yFrom)):
+                if (self.checkDown(xFrom, yFrom)):
                      return True
             else:
-                if (Board.checkUp(self, xFrom, yFrom)):
+                if (self.checkUp(xFrom, yFrom)):
                      return True
 
     def moveStack(self, xFrom, yFrom, xTo, yTo):
-        if (Board.isValidMove(self, xFrom, yFrom, xTo, yTo)):
+        if (self.isValidMove(xFrom, yFrom, xTo, yTo)):
             moveAndLeaveBottomStone() #HOW???
+        else:
+            raise TypeError("Not valid move")
