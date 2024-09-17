@@ -2,12 +2,16 @@ class Game:
     def __init__(self, board):
         self.board = board
 
-    def isValidMove(self, board, xFrom, xTo, yFrom, yTo):
+    def isValidMove(board, xFrom, xTo, yFrom, yTo):
             if (xFrom > xTo):
-                checkLeft(board, xFrom, xTo, yFrom, yTo)
+                if (checkLeft(board, xFrom, xTo, yFrom, yTo)):
+                     return True
             else:
-                checkRight(board, xFrom, xTo, yFrom, yTo)
+                if (checkRight(board, xFrom, xTo, yFrom, yTo)):
+                     return True
             if (yFrom > yTo):
-                checkDown(board, xFrom, xTo, yFrom, yTo)
+                if (checkDown(board, xFrom, xTo, yFrom, yTo)):
+                     return True
             else:
-                checkUp(board, xFrom, xTo, yFrom, yTo)
+                if (checkUp(board, xFrom, xTo, yFrom, yTo)):
+                     return True
