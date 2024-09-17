@@ -1,3 +1,5 @@
+import Game
+
 class Board:
     def __init__(self, board_size, grid):
         self.board_size = 5
@@ -14,20 +16,10 @@ class Board:
     def placeStone(self, x, y):
         self.grid[x][y] = addStone() #Stack group write this!
 
-    def isValidMove(xFrom, yFrom, xTo, yTo):
-        if (xFrom > xTo):
-            checkLeft()
-        else:
-            checkRight()
-        if (yFrom > yTo):
-            checkDown()
-        else:
-            checkUp()
-
     def moveStack(self, xFrom, yFrom, xTo, yTo):
-        if (self.getTile(xFrom, yFrom) < abs(xFrom-xTo) or self.getTile(xFrom, yFrom) < abs(yFrom-yTo)):
-            raise TypeError("Not enough stones in stack")
-        else:
-            if (self.getTile(xFrom, yFrom) == abs(xFrom-xTo) or self.getTile(xFrom, yFrom) == abs(yFrom-yTo)): 
-                self.grid[xFrom][yFrom] = removeStone() #Stack group write this!
-                self.grid[xTo][yTo] = addStone()
+        self.grid[xFrom][yFrom] = removeStone() #Stack group write this!
+        self.grid[xTo][yTo] = addStone()
+
+
+
+    
