@@ -26,10 +26,16 @@ def init_board():
 SQUARESIZE=100
 COLUMN_COUNT=5
 ROW_COUNT=5
+
+
+#colors
+Background = (197, 209, 235)
+Grid = (90, 118, 132)
 Black=(0,0,0)
 White=(255,255,255)
 Brown=(88,57,39)
 Red=(255,0,0)
+Blue = (146, 175, 215)
 
 class Game():
     def __init__(self):
@@ -45,12 +51,14 @@ class Game():
         self.board=init_board()
 
         
-        width=COLUMN_COUNT*SQUARESIZE
-        height=(ROW_COUNT+1)*SQUARESIZE
+        self.width = (COLUMN_COUNT + 2) * SQUARESIZE
+        self.height = (ROW_COUNT + 2) * SQUARESIZE
 
-        size=(width,height)
+        size=(self.width,self.height)
         pygame.init()
         self.screen=pygame.display.set_mode(size)
+        pygame.display.set_caption('The UU game')
+
         return
 
     
@@ -64,7 +72,7 @@ class Game():
             if event.type==pygame.MOUSEBUTTONDOWN:
                 x,y=pygame.mouse.get_pos()
                 c=int(x/SQUARESIZE)
-                r=int(y/SQUARESIZE)-1
+                r=int(y/SQUARESIZE)
                 color = Black
                 if (self.turn == 1):
                     color = White
@@ -83,18 +91,18 @@ class Game():
         # send position in board plus player to grid who will handle the new positions of stacks
         return
 
+
 #add in board, should call render_stack   
     def draw_board(self):
         for c in range(COLUMN_COUNT):
             for r in range(ROW_COUNT):
-                pygame.draw.rect(self.screen,Brown,(c*SQUARESIZE,r*SQUARESIZE+SQUARESIZE,SQUARESIZE,SQUARESIZE))
-                pygame.draw.rect(self.screen,Black,(c*SQUARESIZE+5,r*SQUARESIZE+SQUARESIZE+5,SQUARESIZE-10,SQUARESIZE-10))
+                pygame.draw.rect(self.screen,Grid,(c*SQUARESIZE+SQUARESIZE,r*SQUARESIZE+SQUARESIZE,SQUARESIZE,SQUARESIZE))
+                pygame.draw.rect(self.screen,Background,(c*SQUARESIZE+5+SQUARESIZE,r*SQUARESIZE+SQUARESIZE+5,SQUARESIZE-10,SQUARESIZE-10))
 
 #add in stack as render_stack
     def draw_stone(self):
         for r in range(5):
-            for c in range(5):
-                
+            for c in range(5):   
                 if self.board[r,c].stones.shape[0]>0:
                     for i in range(self.board[r,c].stones.shape[0]):
                         x= c*SQUARESIZE+SQUARESIZE/2
@@ -106,10 +114,15 @@ class Game():
         # Render game state ...
         #render grid (grid renders stacks?)
         #render sidebars
-       self.screen.fill((0,0,0))
-       self.draw_board()
-       self.draw_stone()
-       pygame.display.update()
+        self.screen.fill(Background)
+        self.draw_board()
+        self.draw_stone()
+
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('GeeksForGeeks', True, Red, Blue)
+        textRect = text.get_rect()
+        textRect.center = (self.width // 2, SQUARESIZE // 2)
+        pygame.display.update()
        
 
     def run(self):
