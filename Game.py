@@ -71,19 +71,25 @@ class Game():
             
             if event.type==pygame.MOUSEBUTTONDOWN:
                 x,y=pygame.mouse.get_pos()
-                c=int(x/SQUARESIZE)
-                r=int(y/SQUARESIZE)
-                color = Black
-                if (self.turn == 1):
-                    color = White
+               
+                #check if within grid
+                print(x,y)
+                #if(x < (SQUARESIZE * 6) & x > SQUARESIZE & y < (SQUARESIZE * 6) & y > SQUARESIZE):
+                c=int((x)/SQUARESIZE)-1
+                r=int((y)/SQUARESIZE)-1
+                if(x >= 0 & x <= 5 & y >= 0 & y <= 5):
+                    print(c,r)
+                    color = Black
+                    if (self.turn == 1):
+                        color = White
 
-                ##Change to board.update(player, x , y) also need to know if turn should change
-                #might want to have gameState containing board, players, sidebar etc who will do all of this
-                # check board.check_winner()
-                newStone=stone(color)
-                self.board[r,c].AddStone(newStone)
-                self.turn = not self.turn
-                
+                    ##Change to board.update(player, x , y) also need to know if turn should change
+                    #might want to have gameState containing board, players, sidebar etc who will do all of this
+                    # check board.check_winner()
+                    newStone=stone(color)
+                    self.board[r,c].AddStone(newStone)
+                    self.turn = not self.turn
+                    
         return
 
     def update(self):
@@ -105,7 +111,7 @@ class Game():
             for c in range(5):   
                 if self.board[r,c].stones.shape[0]>0:
                     for i in range(self.board[r,c].stones.shape[0]):
-                        x= c*SQUARESIZE+SQUARESIZE/2
+                        x= (c+1)*SQUARESIZE+SQUARESIZE/2
                         y= (r+1)*SQUARESIZE+SQUARESIZE/2
                         pygame.draw.circle(self.screen,self.board[r,c].stones[i].color,(x,y),40-5*i)
 
@@ -118,10 +124,7 @@ class Game():
         self.draw_board()
         self.draw_stone()
 
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('GeeksForGeeks', True, Red, Blue)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 2, SQUARESIZE // 2)
+
         pygame.display.update()
        
 
