@@ -103,12 +103,18 @@ def draw_GUI():
         player_tag=(player_tag+1)%2
 
 game_over=False
+
+Img=pygame.image.load("assets\\picture\\blue_stand_stone.png")
+
+
 while not game_over:
     screen.fill((0,0,0))
     draw_board()
     draw_stone()
     draw_GUI()
-
+    rect=Img.get_rect()
+    rect.topleft=0,0
+    screen.blit(Img,rect)
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             sys.exit()
