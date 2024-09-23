@@ -13,21 +13,21 @@ class player():
             center_x = graphic.board.grid_size*8
 
 
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Player ' + str(self.id+1), True, Blue, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 32)
+        text = font.render('Player ' + str(self.id+1), True, Text_color, Background)
         textRect = text.get_rect()
         # set the center of the rectangular object.
         textRect.top = (graphic.board.grid_size*1.5)
         textRect.centerx = (center_x)
         screen.blit(text, textRect)
 
-        font = pygame.font.Font('freesansbold.ttf', 25)
-        stones_left = font.render('Stones left:', True, Blue, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 25)
+        stones_left = font.render('Stones left:', True, Text_color, Background)
         stonesRect = stones_left.get_rect()
         stonesRect.center = (center_x, graphic.board.grid_size*3)
         screen.blit(stones_left,stonesRect)
 
-        text = font.render(str(self.stones_left), True, Blue, Background)
+        text = font.render(str(self.stones_left), True, Text_color, Background)
         textRect = text.get_rect()
         textRect.center = (center_x, graphic.board.grid_size*3.5)
         screen.blit(text,textRect)
@@ -44,6 +44,8 @@ EXTRA_HEIGHT=1
 #colors
 Background = (197, 209, 235)
 Blue = (146, 175, 215)
+Text_color = (45, 45, 42)
+
 
 class Game():
     def __init__(self):
@@ -109,8 +111,8 @@ class Game():
             print("")
 
     def draw_player_Information(self):
-        font = pygame.font.Font('freesansbold.ttf', 40)
-        text = font.render('Player ' + str(self.turn+1) +"s turn", True, Blue, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 40)
+        text = font.render('Player ' + str(self.turn+1) +"s turn", True, Text_color, Background)
         textRect = text.get_rect()
     
         # set the center of the rectangular object.

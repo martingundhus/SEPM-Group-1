@@ -20,7 +20,7 @@ class board():
     grid_size=100
 
     def __init__(self,position=(0,0)) -> None:
-        self.img_board=Image("assets\\picture\\board.png",position)
+        self.img_board=Image("assets/picture/board.png",position)
         self.position=position
         self.init_grid()
     
@@ -31,10 +31,10 @@ class board():
             for x in range(5):
                 index=int((x+y)%2)
                 if index==0:
-                    self.grids[y,x]=grid("assets\\picture\\white_grid.png",(orig_x+board.offset_x+x*board.grid_size,
+                    self.grids[y,x]=grid("assets/picture/white_grid.png",(orig_x+board.offset_x+x*board.grid_size,
                                                                             orig_y+board.offset_y+y*board.grid_size))
                 elif index==1:
-                    self.grids[y,x]=grid("assets\\picture\\brown_grid.png",(orig_x+board.offset_x+x*board.grid_size,
+                    self.grids[y,x]=grid("assets/picture/brown_grid.png",(orig_x+board.offset_x+x*board.grid_size,
                                                                             orig_y+board.offset_y+y*board.grid_size))
 
     def draw_board(self,screen):
@@ -68,13 +68,13 @@ class stone():
     def __init__(self,player_tag,stone_tag) -> None:
         
         if player_tag==0 and stone_tag==0:
-            self.img_stone=Image("assets\\picture\\blue_flat_stone.png")
+            self.img_stone=Image("assets/picture/blue_flat_stone.png")
         if player_tag==1 and stone_tag==0:
-            self.img_stone=Image("assets\\picture\\red_flat_stone.png")
+            self.img_stone=Image("assets/picture/red_flat_stone.png")
         if player_tag==0 and stone_tag==1:
-            self.img_stone=Image("assets\\picture\\blue_stand_stone.png")
+            self.img_stone=Image("assets/picture/blue_stand_stone.png")
         if player_tag==1 and stone_tag==1:
-            self.img_stone=Image("assets\\picture\\red_stand_stone.png")
+            self.img_stone=Image("assets/picture/red_stand_stone.png")
         
     def draw(self,screen,x,y):
         self.img_stone.set_position(x,y)
