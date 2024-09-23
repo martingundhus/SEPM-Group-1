@@ -37,7 +37,7 @@ class Board:
         if self.getStack(x,y).stackable:
             self.getStack(x,y).push_stone(player_index, upright_input)  #Stack group write this!
             self.changeTurn()
-            Player.Player.useStone()
+            #self.Player.Player.useStone()
         else:
             raise TypeError("Not valid move")
 
