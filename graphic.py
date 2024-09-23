@@ -20,7 +20,7 @@ class board():
     grid_size=100
 
     def __init__(self,position=(0,0)) -> None:
-        self.img_broad=Image("assets\\picture\\board.png",position)
+        self.img_board=Image("assets\\picture\\board.png",position)
         self.position=position
         self.init_grid()
     
@@ -38,7 +38,7 @@ class board():
                                                                             orig_y+board.offset_y+y*board.grid_size))
 
     def draw_board(self,screen):
-        self.img_broad.draw(screen)
+        self.img_board.draw(screen)
         for y in range(5):
             for x in range(5):
                 self.grids[y,x].draw(screen)
@@ -54,7 +54,7 @@ class grid():
         self.stones=np.empty([0],dtype=stone)
     
     ## for prototype
-    def add_stones(self,stone):
+    def add_stone(self,stone):
         self.stones=np.append(self.stones,stone)
     def draw(self,screen):
         self.img_grid.draw(screen)
