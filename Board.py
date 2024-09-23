@@ -1,27 +1,74 @@
-import Game
+
 import stone
 import stack
 import Player
+import pygame
+from image import Image
 
 import numpy as np
 
 
-class Board:
-    def __init__(self, board_size):
+
+class tile():
+    def __init__(self,grid_path,position=(0,0)) -> None:
+        self.img_grid=Image(grid_path,position)
+        self.position=position
+        self.stack=stack.Stack()
+    
+    ## for prototype
+    def add_stone(self,player_index, upright_input):
+        self.stack.push_stone(player_index, upright_input)
+    
+    def draw(self,screen):
+        self.img_grid.draw(screen)
+
+        #might not work! TODO
+    
+        self.stack.draw(screen,self.position)
+        
+
+class Board():
+    offset_x=31
+    offset_y=31
+    grid_size=100
+
+       
+    def __init__(self, board_size, position=(0,0)) -> None:
         self.board_size = board_size
-        self.grid = np.empty([self.board_size, self.board_size],dtype = stack.Stack)
         self.picked_up_stack = stack.Stack()
         self.turn = 0
         self.current_x = -1
         self.current_y = -1
-        for r in range(board_size):
-            for c in range(board_size):
-                self.grid[r][c] = stack.Stack()
+        #new
+        self.img_board=Image("assets/picture/board.png",position)
+        self.position=position
+        self.init_grid()
+
+
+     
                 
-    # def createBoard(self):
-    #     for x in range(self.board_size):
-    #         for y in range(self.board_size):
-    #             self.grid[x][y] = stack.Stack() #Stack group write this!
+    def init_grid(self):
+            orig_x,orig_y=self.position
+            self.tiles=np.empty((5,5),dtype=tile)
+            for y in range(5):
+                for x in range(5):
+                    index=int((x+y)%2)
+                    if index==0:
+                        self.tiles[y,x]=tile("assets/picture/white_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
+                                                                                orig_y+Board.offset_y+y*Board.grid_size))
+                    elif index==1:
+                        self.tiles[y,x]=tile("assets/picture/brown_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
+                                                                                orig_y+Board.offset_y+y*Board.grid_size))
+    
+    def draw_board(self,screen):
+        self.img_board.draw(screen)
+        for y in range(5):
+            for x in range(5):
+                self.tiles[y,x].draw(screen)
+
+    def draw(self,screen):
+        self.draw_board(screen)
+        
 
     def changeTurn(self):
         self.picked_up_stack = stack.Stack()
@@ -31,7 +78,7 @@ class Board:
             self.turn = 0
 
     def getStack(self, x, y):
-        return self.grid[x][y]
+        return self.tiles[x][y].stack
 
     def placeStone(self, x, y, upright_input, player_index):
         if self.getStack(x,y).stackable:
