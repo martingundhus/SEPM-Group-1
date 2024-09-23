@@ -84,7 +84,7 @@ class select():
     def __init__(self,):
         self.y=0
         self.x=0
-    
+        self.select_grid=None
     def input(self,y,x):
 
         self.y=self.y+y
@@ -103,7 +103,7 @@ class select():
 
         print(f"y={self.y} x={self.x}")
     def draw(self,screen):
-        pygame.draw.rect(screen, (0, 255, 0), (100+board.offset_x+self.x*board.grid_size
+        pygame.draw.rect(screen, (0, 255, 0), (170+board.offset_x+self.x*board.grid_size
                                                  ,100+board.offset_y+self.y*board.grid_size
                                                  , 100, 100)
                                                  , 3)
