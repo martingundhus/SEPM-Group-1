@@ -3,40 +3,9 @@ import sys
 import numpy as np
 import graphic
 import Board
+import Player
 
-
-class player():
-    def __init__(self,id):
-        self.id = id
-        self.stones_left = 21
-
-    #feels wrong
-    def player_stats(self,screen):
-        center_x = Board.Board.grid_size
-        if(self.id == 1):
-            center_x = Board.Board.grid_size*8
-
-
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 32)
-        text = font.render('Player ' + str(self.id+1), True, Text_color, Background)
-        textRect = text.get_rect()
-        # set the center of the rectangular object.
-        textRect.top = (Board.Board.grid_size*1.5)
-        textRect.centerx = (center_x)
-        screen.blit(text, textRect)
-
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 25)
-        stones_left = font.render('Stones left:', True, Text_color, Background)
-        stonesRect = stones_left.get_rect()
-        stonesRect.center = (center_x, Board.Board.grid_size*3)
-        screen.blit(stones_left,stonesRect)
-
-        text = font.render(str(self.stones_left), True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (center_x, Board.Board.grid_size*3.5)
-        screen.blit(text,textRect)
-    
-    
+ 
 COLUMN_COUNT=5
 ROW_COUNT=5
 
@@ -55,9 +24,10 @@ class Game():
     def __init__(self):
         #... Initialization ...
         self.running = True
-        self.turn = 0
-        self.player1 = player(0)
-        self.player2 = player(1)
+       # self.turn = 0  #board keeps track of turn??
+        self.player1 = Player.Player(0,21)
+        self.player2 = Player.Player(1,21)
+        self.round = 0
 
         self.Board=Board.Board(5,position=(int(170),int(100)))
         self.selection=graphic.select()
@@ -84,9 +54,9 @@ class Game():
    
     def change_turn(self):
         if self.turn == 0:
-            self.player1.stones_left -=1
+            self.player1.useStone()
         else:
-            self.player2.stones_left -=1
+            self.player2.useStone()
         
         self.turn=(self.turn+1)%2
 
@@ -106,27 +76,27 @@ class Game():
         if event.key==pygame.K_j:
             print("add flat stone")
             x,y = self.selection.get_selection()
-            self.Board.placeStone(x,y,False,self.turn)
-            self.change_turn()
+            self.Board.placeStone(x,y,False,self.round)
+            self.round += 1
         if event.key==pygame.K_k:
             print("add stand stone")
             x,y = self.selection.get_selection()
-            self.Board.placeStone(x,y,True,self.turn)
-            self.change_turn()
+            self.Board.placeStone(x,y,True,self.round)
+            self.round += 1
         if event.key==pygame.K_l:
             print("")
 
     def draw_player_Information(self):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 40)
-        text = font.render('Player ' + str(self.turn+1) +"s turn", True, Text_color, Background)
+        text = font.render('Player ' + str(self.Board.turn+1) +"s turn", True, Text_color, Background)
         textRect = text.get_rect()
     
         # set the center of the rectangular object.
         textRect.center = (self.width // 2, self.Board.grid_size // 2)
         self.screen.blit(text, textRect)
 
-        self.player1.player_stats(self.screen)
-        self.player2.player_stats(self.screen)
+        self.player1.draw_player_stats(self.screen,self.Board)
+        self.player2.draw_player_stats(self.screen,self.Board)
 
     def draw_instructions(self):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
