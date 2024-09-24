@@ -41,7 +41,7 @@ COLUMN_COUNT=5
 ROW_COUNT=5
 
 EXTRA_WIDTH=2
-EXTRA_HEIGHT=1
+EXTRA_HEIGHT=1.7
 
 
 
@@ -105,11 +105,13 @@ class Game():
             self.selection.input(0,1)
         if event.key==pygame.K_j:
             print("add flat stone")
-            self.Board.tiles[self.selection.get_selection()].add_stone(self.turn,False)
+            x,y = self.selection.get_selection()
+            self.Board.placeStone(x,y,False,self.turn)
             self.change_turn()
         if event.key==pygame.K_k:
             print("add stand stone")
-            self.Board.tiles[self.selection.get_selection()].add_stone(self.turn,True)
+            x,y = self.selection.get_selection()
+            self.Board.placeStone(x,y,True,self.turn)
             self.change_turn()
         if event.key==pygame.K_l:
             print("")
@@ -125,6 +127,31 @@ class Game():
 
         self.player1.player_stats(self.screen)
         self.player2.player_stats(self.screen)
+
+    def draw_instructions(self):
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text = font.render('W,A,S,D to move', True, Text_color, Background)
+        textRect = text.get_rect()
+    
+        # set the center of the rectangular object.
+        textRect.center = (self.width // 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
+        self.screen.blit(text, textRect)
+
+        
+        text = font.render('J: place flat', True, Text_color, Background)
+        textRect = text.get_rect()
+    
+        # set the center of the rectangular object.
+        textRect.center = (self.width // 3, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        self.screen.blit(text, textRect)
+
+        text = font.render('K: place standing', True, Text_color, Background)
+        textRect = text.get_rect()
+    
+        # set the center of the rectangular object.
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        self.screen.blit(text, textRect)
+        
         
     def update(self):
         #... Update game state ...
@@ -139,6 +166,7 @@ class Game():
         self.Board.draw(self.screen)
         self.selection.draw(self.screen)
         self.draw_player_Information()
+        self.draw_instructions()
         
         pygame.display.update()
        
