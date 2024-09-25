@@ -56,6 +56,14 @@ class grid():
     ## for prototype
     def add_stone(self,stone):
         self.stones=np.append(self.stones,stone)
+    
+    def remove_stone(self):
+        remove_stone=self.stones[0]
+        self.stones=np.delete(self.stones,0)
+
+        return remove_stone
+
+
     def draw(self,screen):
         self.img_grid.draw(screen)
 
@@ -85,6 +93,7 @@ class select():
         self.y=0
         self.x=0
         self.select_grid=None
+        self.isSelect=False
     def input(self,y,x):
 
         self.y=self.y+y
@@ -107,8 +116,10 @@ class select():
                                                  ,100+board.offset_y+self.y*board.grid_size
                                                  , 100, 100)
                                                  , 3)
-    
-    def get_selection(self):
+    def select_grid(self,grid):
+        self.select_grid=grid
+        
+    def get_selection_pos(self):
         return (self.y,self.x)
     def __str__(self) -> str:
         return f"y={self.y} x={self.x}"

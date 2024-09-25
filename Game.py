@@ -83,6 +83,7 @@ class Game():
             self.player2.stones_left -=1
         
         self.turn=(self.turn+1)%2
+        self.selection.select_grid=None
 
     def key_control(self,event):
         if event.key== pygame.K_w:
@@ -99,14 +100,28 @@ class Game():
             self.selection.input(0,1)
         if event.key==pygame.K_j:
             print("add flat stone")
-            self.board.grids[self.selection.get_selection()].add_stone(graphic.stone(self.turn,0))
+            self.board.grids[self.selection.get_selection_pos()].add_stone(graphic.stone(self.turn,0))
             self.change_turn()
         if event.key==pygame.K_k:
             print("add stand stone")
-            self.board.grids[self.selection.get_selection()].add_stone(graphic.stone(self.turn,1))
+            self.board.grids[self.selection.get_selection_pos()].add_stone(graphic.stone(self.turn,1))
             self.change_turn()
         if event.key==pygame.K_l:
-            print("")
+            if self.selection.select_grid==None:
+                if self.board.grids[self.selection.get_selection_pos()].stones.shape[0]>0:
+                    self.selection.select_grid=self.board.grids[self.selection.get_selection_pos()]
+                    print("select grid")
+            else:
+                stone=self.selection.select_grid.remove_stone()
+                self.board.grids[self.selection.get_selection_pos()].add_stone(stone)
+        ##cancel select
+        if event.key==pygame.K_o:
+            self.selection.select_grid==None
+        ##change turn
+        if event.key==pygame.K_p:
+            self.change_turn()
+
+
 
     def draw_player_Information(self):
         font = pygame.font.Font('freesansbold.ttf', 40)
