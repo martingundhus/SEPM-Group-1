@@ -32,6 +32,7 @@ class select():
                                                  , 3)
     def select_grid(self,grid):
         self.select_grid=grid
+
         
     def get_selection_pos(self):
         return (self.y,self.x)

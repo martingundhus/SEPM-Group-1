@@ -20,10 +20,11 @@ class tile():
     
     def draw(self,screen):
         self.img_grid.draw(screen)
-
-        #might not work! TODO
-    
         self.stack.draw(screen,self.position)
+
+    def empty(self):
+        self.stack=stack.Stack()
+    
         
 
 class Board():
@@ -65,9 +66,21 @@ class Board():
             for x in range(5):
                 self.tiles[y,x].draw(screen)
 
+        center_x = self.grid_size * (self.board_size + 3.5)
+        Background = (197, 209, 235)
+        Text_color = (45, 45, 42)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 40)
+        text = font.render('Player ' + str(self.turn+1) +"s turn", True, Text_color, Background)
+        textRect = text.get_rect()
+        textRect.center = (center_x // 2, self.grid_size // 2)
+        screen.blit(text, textRect)
+
     def draw(self,screen):
         self.draw_board(screen)
-        
+
+    def hasSelected(self):
+        return (self.picked_up_stack.height() > 0)
+    
 
     def changeTurn(self):
         self.picked_up_stack = stack.Stack()
@@ -78,6 +91,9 @@ class Board():
 
     def getStack(self, x, y):
         return self.tiles[x][y].stack
+    
+    def emptyTile(self,x,y):
+        self.tiles[x][y] = stack.Stack()
 
     def placeStone(self, x, y, upright_input,round):
         player_index = self.turn
@@ -140,19 +156,24 @@ class Board():
     def pickUpStack(self, x, y):
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
             self.picked_up_stack = self.getStack(x,y)
-            self.grid[x][y] = stack.Stack()
+            #self.getStack(x,y)
             self.current_x = x
             self.current_y = y
         else:
             raise TypeError("Cannot pick up this stack")
+        
+  
 
-    def moveStack(self, xFrom, yFrom, xTo, yTo):
-        if (self.isValidMove(xFrom, yFrom, xTo, yTo)):
-            self.picked_up_stack.drop_stone(self.getStack(xTo, yTo)) #HOW???
+    def moveStack(self, xTo, yTo):
+        print("move")
+        if (self.isValidMove(self.current_x, self.current_y, xTo, yTo)):
+            self.picked_up_stack.drop_stone(self.getStack(xTo, yTo))
             self.current_x = xTo
             self.current_y = yTo
             if self.picked_up_stack.height() == 0:
                 self.changeTurn()
+                self.current_x = -1
+                self.current_y = -1
         else:
             raise TypeError("Not valid move")
         
