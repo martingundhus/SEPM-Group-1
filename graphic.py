@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-import board
+import Board
 
 class select():
     def __init__(self,):
@@ -26,8 +26,8 @@ class select():
 
         print(f"y={self.y} x={self.x}")
     def draw(self,screen):
-        pygame.draw.rect(screen, (0, 255, 0), (170+board.Board.offset_x+self.x*board.Board.grid_size
-                                                 ,100+board.Board.offset_y+self.y*board.Board.grid_size
+        pygame.draw.rect(screen, (0, 255, 0), (170+Board.Board.offset_x+self.x*Board.Board.grid_size
+                                                 ,100+Board.Board.offset_y+self.y*Board.Board.grid_size
                                                  , 100, 100)
                                                  , 3)
     def select_grid(self,grid):

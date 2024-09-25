@@ -15,7 +15,6 @@ class tile():
         self.position=position
         self.stack=stack.Stack()
     
-    ## for prototype
     def add_stone(self,player_index, upright_input):
         self.stack.push_stone(player_index, upright_input)
     

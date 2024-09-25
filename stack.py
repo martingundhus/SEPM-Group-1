@@ -37,7 +37,8 @@ class Stack:
 
     '''Drops a stone from the stack to the next stack'''
     def drop_stone(self, next_stack):
-        removed_stone = self.stack_content.popleft()
+        #removed_stone = self.stack_content.popleft()
+        removed_stone = self.stack_content.pop(0)
         if removed_stone.upright:
             next_stack.stackable = False
         next_stack.stack_content.append(removed_stone)

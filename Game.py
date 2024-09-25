@@ -2,7 +2,7 @@ import pygame
 import sys
 import numpy as np
 import graphic
-import board
+import Board
 
 
 class player():
@@ -12,28 +12,28 @@ class player():
 
     #feels wrong
     def player_stats(self,screen):
-        center_x = board.Board.grid_size
+        center_x = Board.Board.grid_size
         if(self.id == 1):
-            center_x = board.Board.grid_size*8
+            center_x = Board.Board.grid_size*8
 
 
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 32)
         text = font.render('Player ' + str(self.id+1), True, Text_color, Background)
         textRect = text.get_rect()
         # set the center of the rectangular object.
-        textRect.top = (board.Board.grid_size*1.5)
+        textRect.top = (Board.Board.grid_size*1.5)
         textRect.centerx = (center_x)
         screen.blit(text, textRect)
 
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 25)
         stones_left = font.render('Stones left:', True, Text_color, Background)
         stonesRect = stones_left.get_rect()
-        stonesRect.center = (center_x, board.Board.grid_size*3)
+        stonesRect.center = (center_x, Board.Board.grid_size*3)
         screen.blit(stones_left,stonesRect)
 
         text = font.render(str(self.stones_left), True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (center_x, board.Board.grid_size*3.5)
+        textRect.center = (center_x, Board.Board.grid_size*3.5)
         screen.blit(text,textRect)
     
     
@@ -59,7 +59,7 @@ class Game():
         self.player1 = player(0)
         self.player2 = player(1)
 
-        self.Board=board.Board(5,position=(int(170),int(100)))
+        self.Board=Board.Board(5,position=(int(170),int(100)))
         self.selection=graphic.select()
         
         self.width = (COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size
@@ -106,20 +106,19 @@ class Game():
             self.selection.input(0,1)
         if event.key==pygame.K_j:
             print("add flat stone")
-            self.Board.tiles[self.selection.get_selection()].add_stone(self.turn,False)
+            self.Board.tiles[self.selection.get_selection_pos()].add_stone(self.turn,False)
             self.change_turn()
         if event.key==pygame.K_k:
             print("add stand stone")
-            self.Board.tiles[self.selection.get_selection()].add_stone(self.turn,True)
+            self.Board.tiles[self.selection.get_selection_pos()].add_stone(self.turn,True)
             self.change_turn()
         if event.key==pygame.K_l:
             if self.selection.select_grid==None:
-                if self.board.grids[self.selection.get_selection_pos()].stones.shape[0]>0:
-                    self.selection.select_grid=self.board.grids[self.selection.get_selection_pos()]
+                if len(self.Board.tiles[self.selection.get_selection_pos()].stack.stack_content)>0:
+                    self.selection.select_grid=self.Board.tiles[self.selection.get_selection_pos()]
                     print("select grid")
             else:
-                stone=self.selection.select_grid.remove_stone()
-                self.board.grids[self.selection.get_selection_pos()].add_stone(stone)
+                self.selection.select_grid.stack.drop_stone(self.Board.tiles[self.selection.get_selection_pos()].stack)
         ##cancel select
         if event.key==pygame.K_o:
             self.selection.select_grid==None
