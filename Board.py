@@ -79,8 +79,11 @@ class Board():
     def getStack(self, x, y):
         return self.tiles[x][y].stack
 
-    def placeStone(self, x, y, upright_input, player_index):
-        if self.getStack(x,y).stackable:
+    def placeStone(self, x, y, upright_input,round):
+        player_index = self.turn
+        if round < 2:
+            player_index = (self.turn+1)%2
+        if self.getStack(x,y).is_stackable():
             self.getStack(x,y).push_stone(player_index, upright_input)  #Stack group write this!
             self.changeTurn()
             #self.Player.Player.useStone()

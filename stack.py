@@ -16,6 +16,9 @@ class Stack:
     # returns amount of stones in stack (length of queue)
     def height(self):
         return len(self.stack_content)
+    
+    def is_stackable(self):
+        return self.stackable
 
     def check_top_stone(self, player_index):
         '''Checks if top stone belongs to player'''
