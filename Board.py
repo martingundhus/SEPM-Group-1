@@ -1,4 +1,3 @@
-
 import stone
 import stack
 import Player
@@ -44,9 +43,7 @@ class Board():
         self.position=position
         self.init_grid()
 
-
-     
-                
+ 
     def init_grid(self):
             orig_x,orig_y=self.position
             self.tiles=np.empty((5,5),dtype=tile)
@@ -115,14 +112,6 @@ class Board():
         else:
             return False
 
-
-    # def enoughStones(tileStack):
-    #     if (stack.Stack.height(tileStack) >= 2):  # Stack Group have written this!
-    #         return True
-    #     else:
-    #         return False
-        
-
     def isValidMove(self, xFrom, xTo, yFrom, yTo):
         if (self.getStack(yFrom, yTo).stackable):
             if (xFrom > xTo):
@@ -156,5 +145,55 @@ class Board():
                 self.changeTurn()
         else:
             raise TypeError("Not valid move")
-        
-    
+
+    def placeStone(self, x, y, upright_input, round):
+        player_index = self.turn
+        if round < 2:
+            player_index = (self.turn + 1) % 2
+        if self.getStack(x, y).is_stackable():
+            self.getStack(x, y).push_stone(player_index, upright_input)
+            if self.check_winning_condition():  # Check for a win after placing a stone
+                print(f"Player {player_index + 1} wins!")  # Example win announcement
+            self.changeTurn()
+        else:
+            raise TypeError("Not valid move")
+
+    def check_winning_condition(self):
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.getStack(x, y).height() > 0:  # Only check stacks with stones
+                    if (self.check_line_winner(x, y, 1, 0) or  # Check horizontally
+                        self.check_line_winner(x, y, 0, 1) or  # Check vertically
+                        self.check_line_winner(x, y, 1, 1) or  # Check diagonally \
+                        self.check_line_winner(x, y, 1, -1)):  # Check diagonally /
+                        return True
+        return False
+
+    def check_line_winner(self, start_x, start_y, delta_x, delta_y):
+        player_index = self.getStack(start_x, start_y).top_player()  # Get the player of the top stone
+        if player_index is None:  # No stones in this stack
+            return False
+
+        count = 1  # Start counting with the first stone
+
+        # Check in one direction
+        for step in range(1, 5):  # Check the next 4 positions
+            x = start_x + step * delta_x
+            y = start_y + step * delta_y
+            if 0 <= x < self.board_size and 0 <= y < self.board_size:
+                if self.getStack(x, y).top_player() == player_index:
+                    count += 1
+                else:
+                    break
+
+        # Check in the opposite direction
+        for step in range(1, 5):
+            x = start_x - step * delta_x
+            y = start_y - step * delta_y
+            if 0 <= x < self.board_size and 0 <= y < self.board_size:
+                if self.getStack(x, y).top_player() == player_index:
+                    count += 1
+                else:
+                    break
+
+        return count >= 5  # Check if there are 5 in a row
