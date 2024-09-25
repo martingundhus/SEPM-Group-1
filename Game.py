@@ -63,7 +63,7 @@ class Game():
         self.selection=graphic.select()
         
         self.width = (COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size
-        self.height = (ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size
+        self.height = (ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size+100
         size=(self.width,self.height)
 
         pygame.init()
@@ -139,7 +139,19 @@ class Game():
 
         self.player1.player_stats(self.screen)
         self.player2.player_stats(self.screen)
-        
+
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text= font.render("a,w,s,d: movie tile , j: place flat stone, k: place stand stone,"
+                          , True, Text_color, Background)
+        textRect = text.get_rect()
+        textRect.topleft=(100,700)
+        self.screen.blit(text, textRect)
+
+        text=font.render("l: select stack and place, o: cancel select stack, p: turn over"
+                         , True, Text_color, Background)
+        textRect = text.get_rect()
+        textRect.topleft=(100,740)
+        self.screen.blit(text, textRect)
     def update(self):
         #... Update game state ...
         # send position in Board.Board plus player to grid who will handle the new positions of stacks
