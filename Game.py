@@ -98,7 +98,6 @@ class Game():
                         print("select grid")
                     else:
                         print("invalid move")
-                        self.Board.draw_error_message(self.screen)
             else:
                 #self.selection.select_grid.stack.drop_stone(self.Board.tiles[self.selection.get_selection_pos()].stack)
                 #pickedUpStack= self.selection.select_grid
@@ -116,7 +115,7 @@ class Game():
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render('W,A,S,D to move', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
+        textRect.center = (self.width // 3*2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         
@@ -127,7 +126,7 @@ class Game():
 
         text = font.render('K: place standing', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("L: select stack and place", True, Text_color, Background)
@@ -137,7 +136,7 @@ class Game():
 
         text=font.render("O: cancel select stack", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.5 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("P: turn over", True, Text_color, Background)
