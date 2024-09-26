@@ -40,6 +40,8 @@ class Board():
         self.current_x = -1
         self.current_y = -1
         #new
+        self.player1 = Player.Player(0,21)
+        self.player2 = Player.Player(1,21)
         self.img_board=Image("assets/picture/board.png",position)
         self.position=position
         self.init_grid()
@@ -77,6 +79,10 @@ class Board():
 
     def draw(self,screen):
         self.draw_board(screen)
+        self.player1.draw_player_stats(screen,self)
+        self.player2.draw_player_stats(screen,self)
+
+
 
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
@@ -102,9 +108,13 @@ class Board():
         if self.getStack(x,y).is_stackable():
             self.getStack(x,y).push_stone(player_index, upright_input)  #Stack group write this!
             self.changeTurn()
-            #self.Player.Player.useStone()
+            if(player_index == 0):
+                self.player1.useStone()
+            else:
+                self.player2.useStone()
+            return True
         else:
-            raise TypeError("Not valid move")
+            return False
 
     def checkLeft(self, x, y):
         if (x != 0 and self.getStack(x-1,y).stackable):
@@ -159,8 +169,9 @@ class Board():
             #self.getStack(x,y)
             self.current_x = x
             self.current_y = y
+            return True
         else:
-            raise TypeError("Cannot pick up this stack")
+            return False
         
   
 
