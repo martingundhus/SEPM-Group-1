@@ -24,6 +24,9 @@ class tile():
 
     def empty(self):
         self.stack=stack.Stack()
+
+    def set_stack(self,stack):
+        self.stack = stack
     
         
 
@@ -39,7 +42,9 @@ class Board():
         self.turn = 0
         self.current_x = -1
         self.current_y = -1
-        #new
+        #square where stack was picked up from
+        self.initial_x = -1
+        self.initial_y = -1
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
         self.img_board=Image("assets/picture/board.png",position)
@@ -81,7 +86,7 @@ class Board():
         self.draw_board(screen)
         self.player1.draw_player_stats(screen,self)
         self.player2.draw_player_stats(screen,self)
-        self.picked_up_stack.draw(screen,(0,0))
+        self.picked_up_stack.draw(screen,(70,500))
 
 
 
@@ -107,7 +112,7 @@ class Board():
         if round < 2:
             player_index = (self.turn+1)%2
         if self.getStack(x,y).is_stackable():
-            self.getStack(x,y).push_stone(player_index, upright_input)  #Stack group write this!
+            self.getStack(x,y).push_stone(player_index, upright_input) 
             self.changeTurn()
             if(player_index == 0):
                 self.player1.useStone()
@@ -169,8 +174,8 @@ class Board():
             self.picked_up_stack = self.getStack(x,y)
             #reset tile
             self.emptyTile(x,y)
-            self.current_x = x
-            self.current_y = y
+            self.current_x = self.initial_x = x
+            self.current_y = self.initial_y = y
             return True
         else:
             return False
@@ -188,5 +193,10 @@ class Board():
             return True
         else:
             return False
-        
+    
+
+    def resetMove(self):
+        if(self.picked_up_stack.height != 0 & self.current_x == self.initial_x & self.current_y == self.initial_y):
+            self.tiles[self.current_x, self.current_y].set_stack(self.picked_up_stack)
+            self.picked_up_stack = stack.Stack()
     

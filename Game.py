@@ -24,7 +24,6 @@ class Game():
     def __init__(self):
         #... Initialization ...
         self.running = True
-       # self.turn = 0  #board keeps track of turn??
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
         self.round = 0
@@ -52,14 +51,7 @@ class Game():
         return
 
    
-    def change_turn(self):
-        if self.turn == 0:
-            self.player1.useStone()
-        else:
-            self.player2.useStone()
-        
-        self.turn=(self.turn+1)%2
-        self.selection.select_grid=None
+   
 
     def key_control(self,event):
         if event.key== pygame.K_w:
@@ -80,6 +72,7 @@ class Game():
             if(self.Board.placeStone(x,y,False,self.round)):
                 self.round += 1
             else:
+                self.selection.set_invalid_color()
                 print("invalid move")
         if event.key==pygame.K_k:
             print("add stand stone")
@@ -87,28 +80,26 @@ class Game():
             if(self.Board.placeStone(x,y,True,self.round)):
                 self.round += 1
             else:
+                self.selection.set_invalid_color()
                 print("invalid move")
         if event.key==pygame.K_l:
             x,y = self.selection.get_selection_pos()
             print(self.Board.picked_up_stack==None)
             if (not self.Board.hasSelected()):
                 if (self.Board.getStack(x,y).height()) > 0:
-                    #self.selection.select_grid=self.Board.tiles[self.selection.get_selection_pos()]
                     if(self.Board.pickUpStack(x,y)):
                         print("select grid")
                     else:
+                        self.selection.set_invalid_color()
                         print("invalid move")
             else:
-                #self.selection.select_grid.stack.drop_stone(self.Board.tiles[self.selection.get_selection_pos()].stack)
-                #pickedUpStack= self.selection.select_grid
                 if(self.Board.moveStack(x,y)):
                     print("move stack")
                 else:
-                    print("invalid move")
-                    
+                    print("invalid move")         
         ##cancel select
         if event.key==pygame.K_o:
-            self.selection.select_grid==None
+            self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
             self.change_turn()

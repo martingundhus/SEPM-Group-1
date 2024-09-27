@@ -46,3 +46,4 @@ class Stack:
             next_stack.stackable = False
         next_stack.stack_content.append(removed_stone)
         return next_stack
+    
