@@ -101,8 +101,11 @@ class Game():
             else:
                 #self.selection.select_grid.stack.drop_stone(self.Board.tiles[self.selection.get_selection_pos()].stack)
                 #pickedUpStack= self.selection.select_grid
-                self.Board.moveStack(x,y)
-                print("move stack")
+                if(self.Board.moveStack(x,y)):
+                    print("move stack")
+                else:
+                    print("invalid move")
+                    
         ##cancel select
         if event.key==pygame.K_o:
             self.selection.select_grid==None

@@ -5,7 +5,7 @@ import stack
 
 class TestStone(unittest.TestCase):
     def setUp(self):
-        self.stone = stone.Stone(1)
+        self.stone = stone.Stone(1,False)
 
     # Testing if stone is created with correct properties
     def test_stone_properties(self):

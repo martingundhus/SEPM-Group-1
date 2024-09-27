@@ -81,6 +81,7 @@ class Board():
         self.draw_board(screen)
         self.player1.draw_player_stats(screen,self)
         self.player2.draw_player_stats(screen,self)
+        self.picked_up_stack.draw(screen,(0,0))
 
 
 
@@ -99,7 +100,7 @@ class Board():
         return self.tiles[x][y].stack
     
     def emptyTile(self,x,y):
-        self.tiles[x][y] = stack.Stack()
+        self.tiles[x][y].empty()
 
     def placeStone(self, x, y, upright_input,round):
         player_index = self.turn
@@ -166,7 +167,8 @@ class Board():
     def pickUpStack(self, x, y):
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
             self.picked_up_stack = self.getStack(x,y)
-            #self.getStack(x,y)
+            #reset tile
+            self.emptyTile(x,y)
             self.current_x = x
             self.current_y = y
             return True
@@ -182,10 +184,9 @@ class Board():
             self.current_x = xTo
             self.current_y = yTo
             if self.picked_up_stack.height() == 0:
-                self.changeTurn()
-                self.current_x = -1
-                self.current_y = -1
+                self.changeTurn()   
+            return True
         else:
-            raise TypeError("Not valid move")
+            return False
         
     
