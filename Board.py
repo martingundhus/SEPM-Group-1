@@ -189,4 +189,62 @@ class Board():
         else:
             return False
         
+
     
+
+    def find_winner(self):
+        visited = set()
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+        def dfs(x, y, first_player_index, first_upright):
+            
+            if not (0 <= x < 5 and 0 <= y < 5):
+                return False
+            if (x, y) in visited:
+                return False
+
+            stack = self.getStack(x, y)
+            if stack.height() == 0:
+                return False
+
+            top_stone = stack.stack_content[-1]
+            
+            if top_stone.player_index != first_player_index or top_stone.upright != first_upright:
+                return False
+            
+            visited.add((x, y))
+
+            if y == self.board_size - 1 or x == self.board_size - 1:
+                print(f"Path found for player {first_player_index} from ({x}, {y})!")
+                return True
+
+            #continue dfs
+            for dx, dy in directions:
+                next_x = x + dx
+                next_y = y + dy
+                if dfs(next_x, next_y, first_player_index, first_upright):
+                    return True
+
+            visited.remove((x, y))
+            return False
+
+        
+        for player_index in [0, 1]:
+            for i in range(self.board_size):
+                print(f"Checking player {player_index}'s path from left side and top side...")
+                first_stack_left = self.getStack(i, 0)
+                if first_stack_left.height() > 0:
+                    first_stone_left = first_stack_left.stack_content[-1]
+                    if dfs(i, 0, first_stone_left.player_index, first_stone_left.upright):
+                        print(f"Player {player_index} wins!")
+                        return player_index
+
+                first_stack_top = self.getStack(0, i)
+                if first_stack_top.height() > 0:
+                    first_stone_top = first_stack_top.stack_content[-1]
+                    if dfs(0, i, first_stone_top.player_index, first_stone_top.upright):
+                        print(f"Player {player_index} wins!")
+                        return player_index
+
+        print("No path found for any player.")
+        return None

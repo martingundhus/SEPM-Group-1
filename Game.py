@@ -4,6 +4,7 @@ import numpy as np
 import graphic
 import Board
 import Player
+import time
 
  
 COLUMN_COUNT=5
@@ -27,6 +28,11 @@ class Game():
        # self.turn = 0  #board keeps track of turn??
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
+
+
+        self.winner_found = False
+
+        
         self.round = 0
 
         self.Board=Board.Board(5,position=(int(170),int(100)))
@@ -50,6 +56,33 @@ class Game():
             if event.type==pygame.QUIT:
                 self.running=False
         return
+    
+    def show_winner_popup(self, message):
+        font = pygame.font.Font(None, 74)
+        text = font.render(message, 1, (0, 0, 0))
+        text_rect = text.get_rect(center=(self.width // 2, self.height // 2))
+
+        self.screen.fill(Background)  # Re-draw background
+        self.screen.blit(text, text_rect)
+        pygame.display.update()
+        
+        # Keep the pop-up on the screen for 3 seconds
+        time.sleep(3)
+
+    def check_winner(self):
+        winner = self.Board.find_winner()
+        if winner == 0:
+            print("Player 1 Wins!")
+            self.winner_found = True
+            self.show_winner_popup("Player 1 Wins!")
+            pygame.quit()
+            sys.exit()
+        elif winner == 1:
+            print("Player 2 Wins!")
+            self.winner_found = True
+            self.show_winner_popup("Player 2 Wins!")
+            pygame.quit()
+            sys.exit()
 
    
     def change_turn(self):
@@ -74,20 +107,24 @@ class Game():
         if event.key==pygame.K_d:
             print("d is pressed")
             self.selection.input(0,1)
+
         if event.key==pygame.K_j:
-            print("add flat stone")
-            x,y = self.selection.get_selection_pos()
-            if(self.Board.placeStone(x,y,False,self.round)):
-                self.round += 1
-            else:
-                print("invalid move")
+             if event.key == pygame.K_j:
+                x, y = self.selection.get_selection_pos()
+                if self.Board.placeStone(x, y, False, self.round):
+                    self.Board.find_winner()
+                    self.round += 1
+                else:
+                    print("Invalid move")
+
         if event.key==pygame.K_k:
-            print("add stand stone")
-            x,y = self.selection.get_selection_pos()
-            if(self.Board.placeStone(x,y,True,self.round)):
+            x, y = self.selection.get_selection_pos()
+            if self.Board.placeStone(x, y, True, self.round):
+                self.Board.find_winner()   
                 self.round += 1
             else:
-                print("invalid move")
+                print("Invalid move")
+                
         if event.key==pygame.K_l:
             x,y = self.selection.get_selection_pos()
             print(self.Board.picked_up_stack==None)
@@ -112,6 +149,22 @@ class Game():
         ##change turn
         if event.key==pygame.K_p:
             self.change_turn()
+
+
+    def update(self):
+        # Update game state
+        pass
+
+    def render(self):
+        # Render game state
+        self.screen.fill(Background)
+        self.Board.draw(self.screen)
+        self.selection.draw(self.screen)
+        self.draw_instructions()
+
+        pygame.display.update()
+
+        
 
 
     def draw_instructions(self):
@@ -167,12 +220,14 @@ class Game():
        
 
     def run(self):
-       while self.running:
-           self.processInput()
-           self.update()
-           self.render()
-           #self.clock.tick(60) 
-       return
+        while self.running:
+            self.processInput()
+            self.update()
+            self.render()
+            if not self.winner_found:
+                self.check_winner()
+       
     
 game = Game()
 game.run()
+
