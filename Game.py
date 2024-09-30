@@ -26,7 +26,6 @@ class Game():
         self.running = True
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
-        self.round = 0
 
         self.Board=Board.Board(5,position=(int(170),int(100)))
         self.selection=graphic.select()
@@ -69,23 +68,18 @@ class Game():
         if event.key==pygame.K_j:
             print("add flat stone")
             x,y = self.selection.get_selection_pos()
-            if(self.Board.placeStone(x,y,False,self.round)):
-                self.round += 1
-            else:
+            if(not self.Board.placeStone(x,y,False)):
                 self.selection.set_invalid_color()
                 print("invalid move")
         if event.key==pygame.K_k:
             print("add stand stone")
             x,y = self.selection.get_selection_pos()
-            if(self.Board.placeStone(x,y,True,self.round)):
-                self.round += 1
-            else:
+            if( not self.Board.placeStone(x,y,True)):
                 self.selection.set_invalid_color()
                 print("invalid move")
         if event.key==pygame.K_l:
             x,y = self.selection.get_selection_pos()
-            print(self.Board.picked_up_stack==None)
-            if (not self.Board.hasSelected()):
+            if (not self.Board.isMove):
                 if (self.Board.getStack(x,y).height()) > 0:
                     if(self.Board.pickUpStack(x,y)):
                         print("select grid")

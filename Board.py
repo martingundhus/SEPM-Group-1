@@ -38,15 +38,15 @@ class Board():
        
     def __init__(self, board_size, position=(0,0)) -> None:
         self.board_size = board_size
-        self.picked_up_stack = stack.Stack()
         self.turn = 0
         self.current_x = -1
         self.current_y = -1
         #square where stack was picked up from
         self.initial_x = -1
         self.initial_y = -1
-        self.player1 = Player.Player(0,21)
-        self.player2 = Player.Player(1,21)
+        self.players = [Player.Player(0,21),Player.Player(1,21)]
+        self.isMove = False
+        self.round = 0
         self.img_board=Image("assets/picture/board.png",position)
         self.position=position
         self.init_grid()
@@ -84,9 +84,9 @@ class Board():
 
     def draw(self,screen):
         self.draw_board(screen)
-        self.player1.draw_player_stats(screen,self)
-        self.player2.draw_player_stats(screen,self)
-        self.picked_up_stack.draw(screen,(70,500))
+        self.players[0].draw_player_stats(screen,self)
+        self.players[1].draw_player_stats(screen,self)
+        
 
 
 
@@ -95,11 +95,11 @@ class Board():
     
 
     def changeTurn(self):
-        self.picked_up_stack = stack.Stack()
         if self.turn == 0:
             self.turn = 1
         else:
             self.turn = 0
+        self.round +=1
 
     def getStack(self, x, y):
         return self.tiles[x][y].stack
@@ -107,17 +107,16 @@ class Board():
     def emptyTile(self,x,y):
         self.tiles[x][y].empty()
 
-    def placeStone(self, x, y, upright_input,round):
+    def placeStone(self, x, y, upright_input):
+        if self.isMove:
+            return False
         player_index = self.turn
-        if round < 2:
+        if self.round < 2:
             player_index = (self.turn+1)%2
         if self.getStack(x,y).is_stackable():
             self.getStack(x,y).push_stone(player_index, upright_input) 
             self.changeTurn()
-            if(player_index == 0):
-                self.player1.useStone()
-            else:
-                self.player2.useStone()
+            self.players[player_index].useStone()
             return True
         else:
             return False
@@ -171,11 +170,12 @@ class Board():
 
     def pickUpStack(self, x, y):
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
-            self.picked_up_stack = self.getStack(x,y)
+            self.players[self.turn].pickUpStack(self.getStack(x,y))
             #reset tile
             self.emptyTile(x,y)
             self.current_x = self.initial_x = x
             self.current_y = self.initial_y = y
+            self.isMove = True
             return True
         else:
             return False
@@ -185,18 +185,22 @@ class Board():
     def moveStack(self, xTo, yTo):
         print("move")
         if (self.isValidMove(self.current_x, self.current_y, xTo, yTo)):
-            self.picked_up_stack.drop_stone(self.getStack(xTo, yTo))
+            self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
             self.current_x = xTo
             self.current_y = yTo
-            if self.picked_up_stack.height() == 0:
-                self.changeTurn()   
+            if self.players[self.turn].picked_up_stack.height() == 0:
+                self.changeTurn()
+                self.isMove = False
+                self.players[self.turn].pickUpStack = None
             return True
         else:
             return False
     
 
     def resetMove(self):
-        if(self.picked_up_stack.height != 0 & self.current_x == self.initial_x & self.current_y == self.initial_y):
-            self.tiles[self.current_x, self.current_y].set_stack(self.picked_up_stack)
-            self.picked_up_stack = stack.Stack()
+       
+        if(self.isMove and self.current_x == self.initial_x and self.current_y == self.initial_y):
+            self.isMove = False
+            self.tiles[self.current_x, self.current_y].set_stack(self.players[self.turn].picked_up_stack)
+            self.players[self.turn].picked_up_stack = None
     

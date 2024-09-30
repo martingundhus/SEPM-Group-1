@@ -124,7 +124,7 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(self.board.getStack(2,1).height(), 5, "Should be height 5")
         self.assertEqual(self.board.getStack(3,1).height(), 3, "Should be height 3")
         self.assertEqual(self.board.getStack(4,1).height(), 1, "Should be height 1")
-        self.assertEqual(self.board.picked_up_stack.height(), 0, "Should be height 0")
+        self.assertEqual(self.board.players[self.board.turn].picked_up_stack, None, "Should be None")
 
         self.assertEqual(self.board.turn, 0, "Should be turn 0")
 
