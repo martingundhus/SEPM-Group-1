@@ -30,8 +30,8 @@ class Game():
         self.Board=Board.Board(5,position=(int(170),int(100)))
         self.selection=graphic.select()
         
-        self.width = (COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size
-        self.height = (ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size+100
+        self.width = int((COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size)
+        self.height = int((ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size+100)
         size=(self.width,self.height)
 
         pygame.init()

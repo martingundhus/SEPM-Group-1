@@ -180,7 +180,7 @@ class Board():
         else:
             return False
         
-  
+ 
 
     def moveStack(self, xTo, yTo):
         print("move")
@@ -189,9 +189,9 @@ class Board():
             self.current_x = xTo
             self.current_y = yTo
             if self.players[self.turn].picked_up_stack.height() == 0:
+                self.players[self.turn].picked_up_stack = None
                 self.changeTurn()
                 self.isMove = False
-                self.players[self.turn].pickUpStack = None
             return True
         else:
             return False
