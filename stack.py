@@ -13,6 +13,8 @@ class Stack:
                 self.stack_content[i].draw(screen,x,y-15*i)
 
     
+
+    
     # returns amount of stones in stack (length of queue)
     def height(self):
         return len(self.stack_content)
