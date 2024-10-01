@@ -19,10 +19,10 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(self.board.getStack(4,3).stackable, "Should be stackable")
         
     def test_place_stone(self):
-        self.board.placeStone(0,4,False,1)
+        self.board.placeStone(0,4,False)
         self.assertFalse(self.board.getStack(0,4).stack_content[0].upright)
         self.assertEqual(self.board.getStack(0,4).stack_content[0].player_index, 1)
-        self.board.placeStone(2,4,True,0)
+        self.board.placeStone(2,4,True)
         self.assertTrue(self.board.getStack(2,4).stack_content[0].upright)
         self.assertEqual(self.board.getStack(2,4).stack_content[0].player_index, 0)
        
@@ -60,9 +60,9 @@ class TestBoard(unittest.TestCase):
         self.assertFalse(self.board.checkUp(1,2), "Shouldn't be able to move up")
 
     def pick_up_stack(self):
-        self.board.placeStone(3,4,False,1)
-        self.board.placeStone(3,4,False,1)
-        self.board.placeStone(3,4,False,1)
+        self.board.placeStone(3,4,False)
+        self.board.placeStone(3,4,False)
+        self.board.placeStone(3,4,False)
         self.board.pickUpStack(3,4)
         self.assertEqual(self.board.current_x, 3)
         self.assertEqual(self.board.current_y, 4)
@@ -75,9 +75,9 @@ class TestBoard(unittest.TestCase):
     def test_move_stack(self):
         self.board.current_x = 3
         self.board.current_y = 3
-        self.board.placeStone(self.board.current_x, self.board.current_y, False, 1)
-        self.board.placeStone(3,4,False,1)
-        self.board.placeStone(3,4,False,1)
+        self.board.placeStone(self.board.current_x, self.board.current_y, False)
+        self.board.placeStone(3,4,False)
+        self.board.placeStone(3,4,False)
         self.board.pickUpStack(3,3)
         self.board.moveStack(3, 4)
         self.assertEqual(self.board.getStack(3,4).height(), 3, "Should be height 3")
@@ -95,19 +95,28 @@ class TestBoard(unittest.TestCase):
         self.board.current_x = 0
         self.board.current_y = 1
         self.board.turn = 1
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,False,1)
-        self.board.placeStone(0,1,True,1)
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,False)
+        self.board.turn = 1
+        self.board.placeStone(0,1,True)
+        self.board.turn = 1
 
-        self.board.placeStone(2,1,False,1)
-        self.board.placeStone(2,1,False,0)
-        self.board.placeStone(2,1,False,1)
-        self.board.placeStone(2,1,False,0)
+        
+        self.board.placeStone(2,1,False)
+        self.board.placeStone(2,1,False)
+        self.board.placeStone(2,1,False)
+        self.board.placeStone(2,1,False)
 
         self.board.pickUpStack(0,1)
         self.board.moveStack( 0, 1)
