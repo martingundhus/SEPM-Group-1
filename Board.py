@@ -68,6 +68,7 @@ class Board():
             for x in range(5):
                 self.tiles[y,x].draw(screen)
 
+        """
         center_x = self.grid_size * (self.board_size + 3.5)
         Background = (197, 209, 235)
         Text_color = (45, 45, 42)
@@ -76,6 +77,15 @@ class Board():
         textRect = text.get_rect()
         textRect.center = (center_x // 2, self.grid_size // 2)
         screen.blit(text, textRect)
+        """
+        if self.turn==1:
+            self.turn_Icon=Image("assets/picture/red_flat_stone.png")
+        else:
+            self.turn_Icon=Image("assets/picture/blue_flat_stone.png")
+        
+        center_X=self.grid_size *4
+        self.turn_Icon.set_position(center_X,10)
+        self.turn_Icon.draw(screen)
 
     def draw(self,screen):
         self.draw_board(screen)

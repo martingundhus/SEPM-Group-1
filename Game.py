@@ -10,7 +10,7 @@ COLUMN_COUNT=5
 ROW_COUNT=5
 
 EXTRA_WIDTH=2
-EXTRA_HEIGHT=1.7
+EXTRA_HEIGHT=1
 
 
 
@@ -33,7 +33,7 @@ class Game():
         self.selection=graphic.select()
         
         self.width = (COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size
-        self.height = (ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size+100
+        self.height = (ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size
         size=(self.width,self.height)
 
         pygame.init()
@@ -51,7 +51,7 @@ class Game():
                 self.running=False
         return
 
-   
+    """
     def change_turn(self):
         if self.turn == 0:
             self.player1.useStone()
@@ -60,7 +60,7 @@ class Game():
         
         self.turn=(self.turn+1)%2
         self.selection.select_grid=None
-
+    """
     def key_control(self,event):
         if event.key== pygame.K_w:
             print("w is pressed")
@@ -98,7 +98,7 @@ class Game():
                         print("select grid")
                     else:
                         print("invalid move")
-                        self.Board.draw_error_message(self.screen)
+                        #self.Board.draw_error_message(self.screen)
             else:
                 #self.selection.select_grid.stack.drop_stone(self.Board.tiles[self.selection.get_selection_pos()].stack)
                 #pickedUpStack= self.selection.select_grid
@@ -109,9 +109,9 @@ class Game():
             self.selection.select_grid==None
         ##change turn
         if event.key==pygame.K_p:
-            self.change_turn()
+            self.Board.changeTurn()
 
-
+    """
     def draw_instructions(self):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render('W,A,S,D to move', True, Text_color, Background)
@@ -145,8 +145,64 @@ class Game():
         textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
         
+    """
+
+    def draw_instructions(self):
+        i=0
+        xPos=10
+        yPos=130
+        if self.Board.turn==1:
+            xPos=xPos+self.Board.grid_size*7+30
         
-        
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text = font.render('W,A,S,D: move', True, Text_color, Background)
+        textRect = text.get_rect()
+        textRect.topleft = (xPos, yPos+i)
+        self.screen.blit(text, textRect)
+        i=i+30
+
+        if self.Board.hasSelected():
+            
+            text=font.render("L: place stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text=font.render("O: cancel select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text=font.render("P: turn over", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            # draw stack
+            pygame.draw.rect(self.screen, (0,0,0), (xPos,yPos+270,155,250), 1)
+            self.Board.picked_up_stack.draw(self.screen,(xPos+30,500))
+        else:
+            text = font.render('J: place flat', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text = font.render('K: place standing', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text=font.render("L: select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
     def update(self):
         #... Update game state ...
         # send position in Board.Board plus player to grid who will handle the new positions of stacks
@@ -158,7 +214,8 @@ class Game():
         #render sidebars
         self.screen.fill(Background)
         self.Board.draw(self.screen)
-        self.selection.draw(self.screen)
+
+        self.selection.draw(self.screen,self.Board.turn)
         self.draw_instructions()
         
         pygame.display.update()
