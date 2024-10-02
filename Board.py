@@ -49,6 +49,7 @@ class Board():
         self.round = 0
         self.img_board=Image("assets/picture/board.png",position)
         self.position=position
+        self.error_message = ""
         self.init_grid()
 
 
@@ -86,9 +87,17 @@ class Board():
         self.draw_board(screen)
         self.players[0].draw_player_stats(screen,self)
         self.players[1].draw_player_stats(screen,self)
-        
-
-
+        self.draw_error_message(screen)
+    
+    def draw_error_message(self,screen):
+        Background = (197, 209, 235)
+        Text_color = (181, 49, 32)
+        center_x = self.grid_size * (self.board_size + 3.5)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text = font.render(self.error_message, True, Text_color, Background)
+        textRect = text.get_rect()
+        textRect.center = (center_x // 2, (self.board_size + 2 )* self.grid_size)
+        screen.blit(text, textRect)
 
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
@@ -117,8 +126,10 @@ class Board():
             self.getStack(x,y).push_stone(player_index, upright_input) 
             self.changeTurn()
             self.players[player_index].useStone()
+            self.error_message = ""
             return True
         else:
+            self.error_message = "Invalid tile to place stone"
             return False
 
     def checkLeft(self, x, y):
@@ -176,8 +187,10 @@ class Board():
             self.current_x = self.initial_x = x
             self.current_y = self.initial_y = y
             self.isMove = True
+            self.error_message = ""
             return True
         else:
+            self.error_message = "Cannot pick up stack"
             return False
         
  
@@ -192,8 +205,10 @@ class Board():
                 self.players[self.turn].picked_up_stack = None
                 self.changeTurn()
                 self.isMove = False
+            self.error_message = ""
             return True
         else:
+            self.error_message = "Cannot move this stack"
             return False
     
 
