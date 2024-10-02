@@ -111,7 +111,7 @@ class Game():
 
         if event.key==pygame.K_k:
             x, y = self.selection.get_selection_pos()
-            if self.Board.placeStone(x, y, True, self.round):
+            if self.Board.placeStone(x, y, True):
                 self.Board.find_winner()   
                 self.round += 1
             else:
