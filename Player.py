@@ -1,18 +1,22 @@
 import pygame
 from image import Image
+import stack
 class Player:
     def __init__(self, id, stonesLeft):
         self.id = id
         self.stonesLeft = stonesLeft
-        self.picked_up_stack = None
-    
-    def pickUpStack(self,stack):
-        self.picked_up_stack = stack
-
+        
+        self.picked_up_stack = stack.Stack()
         if self.id==1:
             self.icon=Image("assets/picture/red_flat_stone.png")
         else:
             self.icon=Image("assets/picture/blue_flat_stone.png")
+    
+    def pickUpStack(self,stack):
+        self.picked_up_stack = stack
+
+    def hasSelected(self):
+        return (self.picked_up_stack.height() > 0)    
     def getId(self):
         return self.id
     
