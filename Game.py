@@ -51,16 +51,6 @@ class Game():
                 self.running=False
         return
 
-    """
-    def change_turn(self):
-        if self.turn == 0:
-            self.player1.useStone()
-        else:
-            self.player2.useStone()
-        
-        self.turn=(self.turn+1)%2
-        self.selection.select_grid=None
-    """
     def key_control(self,event):
         if event.key== pygame.K_w:
             print("w is pressed")
@@ -110,42 +100,6 @@ class Game():
         ##change turn
         if event.key==pygame.K_p:
             self.Board.changeTurn()
-
-    """
-    def draw_instructions(self):
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
-        text = font.render('W,A,S,D to move', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
-        
-        text = font.render('J: place flat', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.7 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
-        text = font.render('K: place standing', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
-        text=font.render("L: select stack and place", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.1 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
-        text=font.render("O: cancel select stack", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
-        text=font.render("P: turn over", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-        
-    """
 
     def draw_instructions(self):
         i=0
