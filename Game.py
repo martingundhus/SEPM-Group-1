@@ -186,7 +186,7 @@ class Game():
 
             # draw stack
             pygame.draw.rect(self.screen, (0,0,0), (xPos,yPos+270,155,250), 1)
-            self.Board.picked_up_stack.draw(self.screen,(xPos+30,500))
+            self.Board.players[self.Board.turn].picked_up_stack.draw(self.screen,(xPos+30,500))
         else:
             text = font.render('J: place flat', True, Text_color, Background)
             textRect = text.get_rect()
