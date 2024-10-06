@@ -150,6 +150,9 @@ class Game():
 
         pygame.display.update()
 
+        
+
+
     def draw_instructions(self):
         i=0
         xPos=10
@@ -164,7 +167,7 @@ class Game():
         self.screen.blit(text, textRect)
         i=i+30
 
-        if self.Board.players[self.Board.turn].hasSelected():
+        if self.Board.hasSelected():
             
             text=font.render("L: place stack", True, Text_color, Background)
             textRect = text.get_rect()
