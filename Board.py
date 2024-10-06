@@ -44,6 +44,7 @@ class Board():
         #square where stack was picked up from
         self.initial_x = -1
         self.initial_y = -1
+        self.direction = "none"
         self.players = [Player.Player(0,21),Player.Player(1,21)]
         self.isMove = False
         self.round = 0
@@ -187,6 +188,7 @@ class Board():
             self.current_x = self.initial_x = x
             self.current_y = self.initial_y = y
             self.isMove = True
+            self.direction = "none"
             self.error_message = ""
             return True
         else:
@@ -198,9 +200,32 @@ class Board():
     def moveStack(self, xTo, yTo):
         print("move")
         if (self.isValidMove(self.current_x, self.current_y, xTo, yTo)):
-            self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
-            self.current_x = xTo
-            self.current_y = yTo
+            if (self.direction == "none"): #If first move direction has to be set
+                if (self.current_x > xTo and self.current_y == yTo):
+                    self.direction = "left"
+                elif (self.current_x < xTo and self.current_y == yTo):
+                    self.direction = "right"
+                elif (self.current_y > yTo and self.current_x == xTo):
+                    self.direction = "down"
+                elif (self.current_y < yTo and self.current_x == xTo):
+                    self.direction = "up"
+            if self.current_x == xTo and self.current_y == yTo:  # Allows player to place multiple stones without moving
+                self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
+            elif self.direction == "up" and self.current_y < yTo and self.current_x == xTo or \
+            self.direction == "down" and self.current_y > yTo and self.current_x == xTo or \
+            self.direction == "left" and self.current_x > xTo and self.current_y == yTo or \
+            self.direction == "right" and self.current_x < xTo and self.current_y == yTo:
+                self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
+
+            # Update position based on direction
+                if self.direction in ["up", "down"]:
+                    self.current_y = yTo
+                elif self.direction in ["left", "right"]:
+                    self.current_x = xTo
+            else:
+                self.error_message = "Have to move in one direction"
+                return False
+            
             if self.players[self.turn].picked_up_stack.height() == 0:
                 self.players[self.turn].picked_up_stack = None
                 self.changeTurn()
