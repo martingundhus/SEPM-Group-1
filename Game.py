@@ -155,7 +155,6 @@ class Game():
 
         
 
-
     def draw_instructions(self):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render('W,A,S,D to move', True, Text_color, Background)
@@ -188,26 +187,8 @@ class Game():
         textRect = text.get_rect()
         textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
-        
-        
-        
-    def update(self):
-        #... Update game state ...
-        # send position in Board.Board plus player to grid who will handle the new positions of stacks
-        return
-    
-    def render(self):
-        # Render game state ...
-        #render grid (grid renders stacks?)
-        #render sidebars
-        self.screen.fill(Background)
-        self.Board.draw(self.screen)
-        self.selection.draw(self.screen)
-        self.draw_instructions()
-        
-        pygame.display.update()
-       
 
+ 
     def run(self):
         while self.running:
             self.processInput()
