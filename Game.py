@@ -40,8 +40,8 @@ class MenuGameMode(GameMode):
         # Menu items
         self.menuItems = [
             {
-                'title': '2v2',
-                'action': lambda: self.ui.setGameMode('2v2')
+                'title': '2 players',
+                'action': lambda: self.ui.setGameMode('1v1')
             },
             {
                 'title': '1 player vs AI',
@@ -330,7 +330,7 @@ class UserInterface():
     
     def setGameMode(self, gameMode):
         if self.playGameMode is None:
-            if(gameMode == '2v2'):
+            if(gameMode == '1v1'):
                 self.playGameMode = TwoPlayerGameMode(self)
                 self.currentActiveMode = 'Play'
             if(gameMode == 'AI'):
