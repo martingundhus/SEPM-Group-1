@@ -20,10 +20,125 @@ Background = (197, 209, 235)
 Blue = (146, 175, 215)
 Text_color = (45, 45, 42)
 
+###############################################################################
+#                                Game Modes                                   #
+###############################################################################
+class GameMode():
+    def processInput(self):
+        raise NotImplementedError()
+    def render(self, window):
+        raise NotImplementedError()
+    
+class MenuGameMode(GameMode):
+    def __init__(self,ui):
+        self.ui = ui
+        
+        # Font
+        self.titleFont = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 70)
+        self.itemFont = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 45)
 
-class Game():
-    def __init__(self):
-        #... Initialization ...
+        # Menu items
+        self.menuItems = [
+            {
+                'title': '2 players',
+                'action': lambda: self.ui.setGameMode('1v1')
+            },
+            {
+                'title': '1 player vs AI',
+                'action': lambda: self.ui.setGameMode('AI')
+            },
+            {
+                'title': 'Quit',
+                'action': lambda: self.ui.quitGame()
+            }
+        ]
+        self.currentMenuItem = 0
+        self.menuCursor = pygame.image.load("assets/picture/blue_flat_stone.png") ##change
+
+        # Loop properties
+        self.clock = pygame.time.Clock()
+        self.running = True
+
+    def difficultySelection(self):
+        # Menu items
+        self.menuItems = [
+            {
+                'title': 'easy',
+                'action': lambda: self.ui.setGameMode('easy')
+            },
+            {
+                'title': 'med',
+                'action': lambda: self.ui.setGameMode('med')
+            },
+            {
+                'title': 'hard',
+                'action': lambda: self.ui.setGameMode('hard')
+            },
+            {
+                'title': 'Quit',
+                'action': lambda: self.ui.quitGame()
+            }
+        ]
+
+    def processInput(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.exitMenu()
+                break
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                    if self.currentMenuItem < len(self.menuItems) - 1:
+                        self.currentMenuItem += 1
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                    if self.currentMenuItem > 0:
+                        self.currentMenuItem -= 1
+                elif event.key == pygame.K_RETURN:
+                    menuItem = self.menuItems[self.currentMenuItem]
+                    try:
+                        menuItem['action']()
+                    except Exception as ex:
+                        print(ex)
+    
+    def render(self,window):
+        window.fill(Background)
+
+        # Initial y
+        y = 50
+
+        # Title
+        surface = self.titleFont.render("The UU game", True, Text_color)
+        x = (window.get_width() - surface.get_width()) // 2
+        window.blit(surface, (x, y))
+        y += (200 * surface.get_height()) // 100
+
+
+        # Compute menu width
+        menuWidth = 0
+        for item in self.menuItems:
+            surface = self.itemFont.render(item['title'], True, Text_color)
+            menuWidth = max(menuWidth, surface.get_width())
+            item['surface'] = surface
+
+        # Draw menu items
+        x = (window.get_width() - menuWidth) // 2
+        for index, item in enumerate(self.menuItems):
+            # Item text
+            surface = item['surface']
+            window.blit(surface, (x, y))
+
+            # Cursor
+            if index == self.currentMenuItem:
+                cursorX = x - self.menuCursor.get_width() - 10
+                cursorY = y + (surface.get_height() - self.menuCursor.get_height()) // 2
+                window.blit(self.menuCursor, (cursorX, cursorY))
+
+            y += (120 * surface.get_height()) // 100
+
+        pygame.display.update() 
+
+class TwoPlayerGameMode(GameMode):
+    def __init__(self,ui):
+        self.ui = ui
         self.running = True
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
@@ -53,8 +168,9 @@ class Game():
             if event.type==pygame.KEYDOWN:
                 self.key_control(event)
             if event.type==pygame.QUIT:
-                self.running=False
+                self.ui.quitGame()
         return
+
     
     def show_winner_popup(self, message):
         font = pygame.font.Font(None, 74)
@@ -83,20 +199,18 @@ class Game():
             pygame.quit()
             sys.exit()
 
-   
-   
 
     def key_control(self,event):
-        if event.key== pygame.K_w:
+        if event.key== pygame.K_w or event.key == pygame.K_UP:
             print("w is pressed")
             self.selection.input(-1,0)
-        if event.key==pygame.K_s:
+        if event.key==pygame.K_s or event.key == pygame.K_DOWN:
             print("s is pressed")
             self.selection.input(1,0)
-        if event.key==pygame.K_a:
+        if event.key==pygame.K_a or event.key == pygame.K_LEFT:
             print("a is pressed")
             self.selection.input(0,-1)
-        if event.key==pygame.K_d:
+        if event.key==pygame.K_d or event.key == pygame.K_RIGHT:
             print("d is pressed")
             self.selection.input(0,1)
 
@@ -137,14 +251,10 @@ class Game():
             self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
-            self.change_turn()
+            self.Board.change_turn()
 
 
-    def update(self):
-        # Update game state
-        pass
-
-    def render(self):
+    def render(self,screen):
         # Render game state
         self.screen.fill(Background)
         self.Board.draw(self.screen)
@@ -152,8 +262,7 @@ class Game():
         self.draw_instructions()
 
         pygame.display.update()
-
-        
+    
 
     def draw_instructions(self):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
@@ -192,12 +301,88 @@ class Game():
     def run(self):
         while self.running:
             self.processInput()
-            self.update()
             self.render()
             if not self.winner_found:
                 self.check_winner()
+
+
+###############################################################################
+#                             User Interface                                  #
+###############################################################################
+class UserInterface():
+    def __init__(self):
+        # Window
+        pygame.init()
+        self.window = pygame.display.set_mode((1000, 720))
+        pygame.display.set_caption("The UU game")
+        
+
+        # Modes
+        self.playGameMode = None
+        self.overlayGameMode = MenuGameMode(self)
+        self.currentActiveMode = 'Overlay'
+
+        # Loop properties
+        self.clock = pygame.time.Clock()
+        self.running = True 
+
+        return
+    
+    def setGameMode(self, gameMode):
+        if self.playGameMode is None:
+            if(gameMode == '1v1'):
+                self.playGameMode = TwoPlayerGameMode(self)
+                self.currentActiveMode = 'Play'
+            if(gameMode == 'AI'):
+                self.overlayGameMode.difficultySelection()
+            if(gameMode == 'easy'):
+                self.playGameMode = TwoPlayerGameMode(self)
+                self.currentActiveMode = 'Play'
+                #change to set AIGameModeEasy
+            if(gameMode == 'med'):
+                self.playGameMode = TwoPlayerGameMode(self)
+                self.currentActiveMode = 'Play'
+            if(gameMode == 'hard'):
+                self.playGameMode = TwoPlayerGameMode(self)
+                self.currentActiveMode = 'Play'
+            
+            
+    
+    
+    def showGame(self):
+        if self.playGameMode is not None:
+            self.currentActiveMode = 'Play'
+
+    def showMenu(self):
+        self.overlayGameMode = MenuGameMode(self)
+        self.currentActiveMode = 'Overlay'
+        
+    def quitGame(self):
+        self.running = False
+       
+    def run(self):
+        while self.running:
+            if self.currentActiveMode == 'Overlay':
+                self.overlayGameMode.processInput()
+            elif self.playGameMode is not None:
+                self.playGameMode.processInput()
+                    
+            # Render game (if any), and then the overlay (if active)
+            if self.playGameMode is not None:
+                self.playGameMode.render(self.window)
+            else:
+                self.window.fill((0,0,0))
+            if self.currentActiveMode == 'Overlay':
+                darkSurface = pygame.Surface(self.window.get_size(),flags=pygame.SRCALPHA)
+                pygame.draw.rect(darkSurface, (0,0,0,150), darkSurface.get_rect())
+                self.window.blit(darkSurface, (0,0))
+                self.overlayGameMode.render(self.window)
+                
+            # Update display
+            pygame.display.update()    
+            self.clock.tick(60)
        
     
-game = Game()
-game.run()
+ui = UserInterface()
+ui.run()
 

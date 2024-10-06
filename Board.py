@@ -53,9 +53,7 @@ class Board():
         self.error_message = ""
         self.init_grid()
 
-
-     
-                
+          
     def init_grid(self):
             orig_x,orig_y=self.position
             self.tiles=np.empty((5,5),dtype=tile)
