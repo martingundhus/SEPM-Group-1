@@ -300,3 +300,44 @@ class Board():
 
         print("No path found for any player.")
         return None
+    
+    #        self.players = [Player.Player(0,21),Player.Player(1,21)]
+    # Returns a list of all the valid moves for a player
+    # Example of output : [['move', ((0, 0), 1), ((0, 1), 2)], ['move', ((0, 0), 2), ((0, 1), 1)], ['place', (0, 1), 1]]
+    def get_valid_moves(self, player):
+        valid_moves = []
+        if player == 0:
+            pieces_left = self.players[0][1]
+        else:
+            pieces_left = self.players[1][1]
+
+        for row in range(0, 5): #TODO hard coded 5
+            for col in range(0, 5): #TODO hard coded 5
+                # if a stack is empty, player can place a stone
+                if self.emptyTile(row, col) and pieces_left > 0:
+                    valid_moves.append(["place", (row, col), 0])
+                    valid_moves.append(["place", (row, col), 1])
+                # If the player owns the stack, calculate stack moves
+                elif not self.emptyTile(row, col):
+                    if self.getStack(row, col).check_top_stone(self.turn): # TODO self.turn? maybe player instead
+                        height = len(self.getStack(row, col))
+                        travel_paths = self.check_travel_paths(height, row, col) #TODO check_travel_paths!
+                        if height > 1:
+                            # For each direction and max distance, calculate stone combinations
+                            for direction, max_distance in travel_paths:
+                                for stones_left_behind in self.generate_stone_combinations(height - 1, max_distance): #TODO generate_stone_combinations!!
+                                    valid_moves.append(["move", (row, col), direction, stones_left_behind])
+
+                        else:
+                            for direction, _ in travel_paths:
+                                valid_moves.append(["move", (row, col), direction, []])
+
+                    if self.getStack(row, col).is_stackable() and pieces_left > 0:
+                        valid_moves.append(["place", (row, col), 0])
+                        valid_moves.append(["place", (row, col), 1])
+                
+        if not valid_moves:
+            # TODO : end of the game - merge winning conditions ?
+            print("No valid moves")
+            pass
+        return valid_moves
