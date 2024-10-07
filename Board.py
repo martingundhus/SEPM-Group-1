@@ -300,3 +300,33 @@ class Board():
 
         print("No path found for any player.")
         return None
+    
+    def possible_moves_left(self):
+         #check stones left
+        self.stones_left = True
+        if self.turn == 0:
+           if self.players[0].getStonesLeft() == 0:
+               self.stones_left = False
+        else:
+            if self.players[1].getStonesLeft() == 0:
+               self.stones_left = False
+        
+        #check playable tiles left
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.getStack(x,y).height() == 0 or self.getStack(x,y).is_stackable():
+                    if self.stones_left:
+                        return True
+                    else:
+                        #check if there are movable stacks in proximity to playable tile
+                        if (y > 0 and self.getStack(x, y - 1).check_top_stone(self.turn)) or \
+                            (y < self.board_size - 1 and self.getStack(x, y + 1).check_top_stone(self.turn)) or \
+                            (x > 0 and self.getStack(x - 1, y).check_top_stone(self.turn)) or \
+                            (x < self.board_size - 1 and self.getStack(x + 1, y).check_top_stone(self.turn)) or \
+                            (x > 0 and y > 0 and self.getStack(x - 1, y - 1).check_top_stone(self.turn)) or \
+                            (x < self.board_size - 1 and y < self.board_size - 1 and self.getStack(x + 1, y + 1).check_top_stone(self.turn)):
+                            return True
+                        else:
+                            continue
+        return False
+    
