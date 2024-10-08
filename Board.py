@@ -418,7 +418,7 @@ class Board():
     def evaluate(self):
         score = 0
     
-        if find_winner() == 1: # AI wins
+        if self.find_winner() == 1: # AI wins
             return float('inf') # Best case for AI
         else: # Player wins
             return float('-inf') # Worst case for AI
