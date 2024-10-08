@@ -251,7 +251,7 @@ class TwoPlayerGameMode(GameMode):
             self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
-            self.Board.change_turn()
+            self.Board.changeTurn()
 
 
     def render(self,screen):
@@ -263,40 +263,58 @@ class TwoPlayerGameMode(GameMode):
 
         pygame.display.update()
     
-
     def draw_instructions(self):
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
-        text = font.render('W,A,S,D to move', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3*2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
+        i=0
+        xPos=10
+        yPos=130
+        if self.Board.turn==1:
+            xPos=xPos+self.Board.grid_size*7+30
         
-        text = font.render('J: place flat', True, Text_color, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text = font.render('W,A,S,D: move', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.topleft = (xPos, yPos+i)
         self.screen.blit(text, textRect)
+        i=i+30
 
-        text = font.render('K: place standing', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+        if self.Board.players[self.Board.turn].picked_up_stack!=None:
+            
+            text=font.render("L: place stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("L: select stack and place", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.1 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+            text=font.render("O: cancel select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("O: cancel select stack", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.5 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+            text=font.render("P: turn over", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("P: turn over", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+        else:
+            text = font.render('J: place flat', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
+            text = font.render('K: place standing', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text=font.render("L: select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
  
     def run(self):
         while self.running:
