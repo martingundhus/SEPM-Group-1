@@ -5,11 +5,19 @@ from copy import deepcopy
 # Minimax algorithm implementation
 def minimax(board, depth, is_maximizing, alpha, beta, is_first_move):
     # Base cases: terminal state (win/loss, draw, or depth limit reached)
-    if board.has_path(1):  # AI has a winning path
-        return float('inf')
-    if board.has_path(0):  # Player has a winning path
-        return float('-inf')
-    if board.is_stalemate(1) or depth == 0:
+    if board.find_winner() == 1: # AI wins
+        return float('inf') # Best case for AI
+    if board.find_winner() == 0: # Player wins
+        return float('-inf') # Worst case for AI
+    
+    if is_maximizing:
+        if board.is_stalemate(1):
+            pass #inf for ai win and -inf for player win    TODO
+    if not is_maximizing:
+        if board.is_stalemate(1):
+            pass #inf for ai win and -inf for player win
+    
+    if depth == 0:
         return board.evaluate()  # Evaluate current board if depth limit is reached
 
     if is_maximizing:

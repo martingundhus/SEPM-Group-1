@@ -474,3 +474,11 @@ class Board():
             prox_score += len(colx)**2
         
         return prox_score
+    
+    # checks if there is a stalemate, returns False if there are possible moves for a player, and else returns true
+    def is_stalemate(self, player):
+        possible_moves = self.get_valid_moves(player)
+
+        if len(possible_moves) > 0:
+            return False
+        return True
