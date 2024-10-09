@@ -50,8 +50,12 @@ def simulate_move(board, move, owner):
     return new_board
 
 # AI action selection for different levels
-def get_action_level1(moves):
+def get_action_level1(board, player):
+
+    if board.turns < 2:
+        piece_color = 1 - player
     # Random selection for easy difficulty (placeholder)
+    moves = board.get_valid_moves(piece_color)
     return random.choice(moves)
 
 def get_action_level2(board, player):
