@@ -301,13 +301,12 @@ class Board():
         print("No path found for any player.")
         return None
     
-    #        self.players = [Player.Player(0,21),Player.Player(1,21)]
     # Returns a list of all the valid moves for a player
-    # Example of output : [['move', ((0, 0), 1), ((0, 1), 2)], ['move', ((0, 0), 2), ((0, 1), 1)], ['place', (0, 1), 1]]
+    # Example of output : [['move', (1,3), 2, [2,1,1]], ['place', (0, 1), 1]...]
     def get_valid_moves(self, player):
         valid_moves = []
         if player == 0:
-            pieces_left = self.players[0][1]
+            pieces_left = self.players[0][1] #TODO does it update?
         else:
             pieces_left = self.players[1][1]
 
@@ -330,7 +329,7 @@ class Board():
 
                         else:
                             for direction, _ in travel_paths:
-                                valid_moves.append(["move", (row, col), direction, []])
+                                valid_moves.append(["move", (row, col), direction, [0, 1]])
 
                     if self.getStack(row, col).is_stackable() and pieces_left > 0:
                         valid_moves.append(["place", (row, col), 0])
@@ -339,7 +338,7 @@ class Board():
         if not valid_moves:
             # TODO : end of the game - merge winning conditions ?
             print("No valid moves")
-            pass
+
         return valid_moves
     
     def check_travel_paths(self, height, row, col):    
@@ -355,9 +354,6 @@ class Board():
             curr_row, curr_col = row + row_step, col + col_step
             remaining_height = height # Since we start with the initial stack
             max_distance = 0
-
-            if height == 1:
-                remaining_height = 1
 
             # Loop to find how far the stack can move in this direction
             while remaining_height > 0 and 0 <= curr_row < 5 and 0 <= curr_col < 5: #TODO hard coded 5 :/
@@ -375,23 +371,17 @@ class Board():
         directions = [(1, 0), (-1, 0), (0, -1), (0, 1)]
         travel_paths = []
         for index, (row_step, col_step) in enumerate(directions):
+            # for each direction, get the max distance the stack can travel
             distance = get_max_distance_in_direction(row_step, col_step)
             if distance != 0:
                 travel_paths.append((index, distance))
-
-
-        # For each direction, get the max distance the stack can travel
-        # travel_paths = [(index, get_max_distance_in_direction(row_step, col_step))
-        #                 for index, (row_step, col_step) in enumerate(directions)]
-        
-
 
         return travel_paths
     
     def generate_stone_combinations(self, stones_to_distribute, max_distance, allow_zero_at_first_step=True):
         """
         Generate all valid combinations of how to distribute stones over a given maximum distance.
-        Example: If there are 2 stones and you can move 2 steps, you can leave [1, 1] or [2] stones behind.
+        Example: If there are 2 stones and you can move 3 steps, you can leave [1, 1], [0, 1, 1], [0, 2] or [2] stones behind.
         """
         combinations = []
 
@@ -402,7 +392,7 @@ class Board():
         start_range = 0 if allow_zero_at_first_step else 1
 
         # Generate combinations based on the available distance
-        for i in range(1, stones_to_distribute + 1):
+        for i in range(start_range, stones_to_distribute + 1):
             if max_distance > 1:
                 remaining = stones_to_distribute - i
                 if remaining > 0:
@@ -420,13 +410,14 @@ class Board():
     
         if self.find_winner() == 1: # AI wins
             return float('inf') # Best case for AI
-        else: # Player wins
+        elif self.find_winner() == 0: # Player wins
             return float('-inf') # Worst case for AI
 
         score += self.evaluate_control(1) - self.evaluate_control(0) # AI controlled stacks - Player controlled stacks
         score += self.evaluate_blocking(1) - self.evaluate_blocking(0)  # AI blocking - Player blocking
         score += self.evaluate_mobility(1) - self.evaluate_mobility(0)  # AI mobility - Player mobility
         score += self.evaluate_proximity_to_win(1) - self.evaluate_proximity_to_win(0)  # AI proximity - Player proximity
+
         return score
 
     def evaluate_control(self, player):
