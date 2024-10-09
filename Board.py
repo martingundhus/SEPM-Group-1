@@ -300,6 +300,11 @@ class Board():
         print("No path found for any player.")
         return None
     
+
+    ###############################################################################
+    #                             AI UTILITY FUNCTIONS                            #
+    ###############################################################################
+
     # Returns a list of all the valid moves for a player
     # Example of output : [['move', (1,3), 2, [2,1,1]], ['place', (0, 1), 1]...]
     def get_valid_moves(self, player):
