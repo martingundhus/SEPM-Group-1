@@ -95,13 +95,12 @@ class Board():
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render(self.error_message, True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (center_x // 2, (self.board_size + 2 )* self.grid_size)
+        textRect.center = (center_x // 2, self.grid_size - 10)
         screen.blit(text, textRect)
 
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
     
-
     def changeTurn(self):
         if self.turn == 0:
             self.turn = 1
