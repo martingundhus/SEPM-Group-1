@@ -11,7 +11,7 @@ COLUMN_COUNT=5
 ROW_COUNT=5
 
 EXTRA_WIDTH=2
-EXTRA_HEIGHT=1.7
+EXTRA_HEIGHT=1
 
 
 
@@ -268,33 +268,33 @@ class TwoPlayerGameMode(GameMode):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render('W,A,S,D to move', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3*2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.center = (self.width // 3*2, (self.Board.board_size + 2 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         
         text = font.render('J: place flat', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text = font.render('K: place standing', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("L: select stack and place", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.1 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2.3 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("O: cancel select stack", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.5 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.6 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("P: turn over", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2.6 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
  
