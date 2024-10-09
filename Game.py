@@ -251,7 +251,7 @@ class TwoPlayerGameMode(GameMode):
             self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
-            self.Board.change_turn()
+            self.Board.changeTurn()
 
 
     def render(self,screen):
