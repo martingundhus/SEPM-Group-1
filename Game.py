@@ -11,7 +11,7 @@ COLUMN_COUNT=5
 ROW_COUNT=5
 
 EXTRA_WIDTH=2
-EXTRA_HEIGHT=1.7
+EXTRA_HEIGHT=1
 
 
 
@@ -83,7 +83,7 @@ class MenuGameMode(GameMode):
     def processInput(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.exitMenu()
+                self.ui.quitGame()
                 break
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -136,8 +136,8 @@ class MenuGameMode(GameMode):
 
         pygame.display.update() 
 
-class TwoPlayerGameMode(GameMode):
-    def __init__(self,ui):
+class PlayGameMode(GameMode):
+    def __init__(self,ui,dificulty):
         self.ui = ui
         self.running = True
         self.player1 = Player.Player(0,21)
@@ -147,9 +147,7 @@ class TwoPlayerGameMode(GameMode):
         #self.winner_found = False
 
         
-        self.round = 0
-
-        self.Board=Board.Board(5,position=(int(170),int(100)))
+        self.Board=Board.Board(5,dificulty,(int(170),int(100)))
         self.selection=graphic.select()
         
         self.width = int((COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size)
@@ -227,7 +225,7 @@ class TwoPlayerGameMode(GameMode):
             x, y = self.selection.get_selection_pos()
             if self.Board.placeStone(x, y, True):
                 self.Board.find_winner()   
-                self.round += 1
+                
             else:
                 self.selection.set_invalid_color()
                 print("Invalid move")
@@ -251,7 +249,7 @@ class TwoPlayerGameMode(GameMode):
             self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
-            self.Board.change_turn()
+            self.Board.changeTurn()
 
 
     def render(self,screen):
@@ -268,33 +266,33 @@ class TwoPlayerGameMode(GameMode):
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
         text = font.render('W,A,S,D to move', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3*2, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.center = (self.width // 3*2, (self.Board.board_size + 2 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         
         text = font.render('J: place flat', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.7 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text = font.render('K: place standing', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.1 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("L: select stack and place", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.1 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2.3 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("O: cancel select stack", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 3.5 )* self.Board.grid_size)
+        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.6 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
         text=font.render("P: turn over", True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 3.5 )* self.Board.grid_size)
+        textRect.center = (self.width // 3, (self.Board.board_size + 2.6 )* self.Board.grid_size)
         self.screen.blit(text, textRect)
 
  
@@ -304,6 +302,7 @@ class TwoPlayerGameMode(GameMode):
             self.render()
             #if not self.winner_found:
             #    self.check_winner()
+
 
 
 ###############################################################################
@@ -331,19 +330,19 @@ class UserInterface():
     def setGameMode(self, gameMode):
         if self.playGameMode is None:
             if(gameMode == '1v1'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,0)
                 self.currentActiveMode = 'Play'
             if(gameMode == 'AI'):
                 self.overlayGameMode.difficultySelection()
             if(gameMode == 'easy'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,1)
                 self.currentActiveMode = 'Play'
                 #change to set AIGameModeEasy
             if(gameMode == 'med'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,2)
                 self.currentActiveMode = 'Play'
             if(gameMode == 'hard'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,3)
                 self.currentActiveMode = 'Play'
             
             

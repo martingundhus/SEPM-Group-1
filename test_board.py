@@ -7,7 +7,7 @@ import numpy as np
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.board = Board.Board(board_size=5)
+        self.board = Board.Board(board_size=5, dificulty=0)
 
     def test_stack_on_tile(self):
         self.assertEqual(self.board.getStack(0,0).stack_content, list(), "Should be an empty stack here")
@@ -26,29 +26,29 @@ class TestBoard(unittest.TestCase):
         self.assertTrue(self.board.getStack(2,4).stack_content[0].upright)
         self.assertEqual(self.board.getStack(2,4).stack_content[0].player_index, 0)
        
-    def check_stack_height_and_stackableness(self):
-        self.board.placeStone(0,0,False,1)
+    def test_check_stack_height_and_stackableness(self):
+        self.board.placeStone(0,0,False)
         self.assertTrue(self.board.getStack(0,0).stackable, "Should be stackable")
         self.assertEqual(self.board.getStack(0,0).height(), 1, "Should be height 1")
-        self.board.placeStone(0,0,True,1)
+        self.board.placeStone(0,0,True)
         self.assertFalse(self.board.getStack(0,0).stackable, "Shouldn't be stackable")
         self.assertEqual(self.board.getStack(0,0).height(), 2, "Should be height 2")
   
-    def check_direction_test_false(self):
-        self.board.placeStone(3,4,True,1)
-        self.board.placeStone(3,2,True,1)
-        self.board.placeStone(2,3,True,1)
-        self.board.placeStone(4,3,True,1)
+    def test_check_direction_test_false(self):
+        self.board.placeStone(3,4,True)
+        self.board.placeStone(3,2,True)
+        self.board.placeStone(2,3,True)
+        self.board.placeStone(4,3,True)
         self.assertFalse(self.board.checkRight(3,3), "Shouldn't be able to move right")
         self.assertFalse(self.board.checkLeft(3,3), "Shouldn't be able to move left")
         self.assertFalse(self.board.checkUp(3,3), "Shouldn't be able to move up")
         self.assertFalse(self.board.checkDown(3,3), "Shouldn't be able to move down")
 
-    def check_direction_test_true(self):
-        self.board.placeStone(3,4,False,1)
-        self.board.placeStone(3,2,False,1)
-        self.board.placeStone(2,3,False,1)
-        self.board.placeStone(4,3,False,1)
+    def test_check_direction_test_true(self):
+        self.board.placeStone(3,4,False)
+        self.board.placeStone(3,2,False)
+        self.board.placeStone(2,3,False)
+        self.board.placeStone(4,3,False)
         self.assertTrue(self.board.checkRight(3,3), "Should be able to move right")
         self.assertTrue(self.board.checkLeft(3,3), "Should be able to move left")
         self.assertTrue(self.board.checkUp(3,3), "Should be able to move up")
@@ -56,21 +56,23 @@ class TestBoard(unittest.TestCase):
 
         #checking empty tile then adding a stone and checking again
         self.assertTrue(self.board.checkUp(1,2), "Should be able to move up")
-        self.board.placeStone(1,3,True,1)
+        self.board.placeStone(1,3,True)
         self.assertFalse(self.board.checkUp(1,2), "Shouldn't be able to move up")
 
-    def pick_up_stack(self):
+    def test_pick_up_stack(self):
+        self.board = Board.Board(board_size=5, dificulty=0)
         self.board.placeStone(3,4,False)
         self.board.placeStone(3,4,False)
         self.board.placeStone(3,4,False)
-        self.board.pickUpStack(3,4)
+        self.board.placeStone(4,4,False)
+        self.assertTrue(self.board.pickUpStack(3,4))
         self.assertEqual(self.board.current_x, 3)
         self.assertEqual(self.board.current_y, 4)
         right_answer = stack.Stack()
         right_answer.push_stone(1, False)
         right_answer.push_stone(1, False)
         right_answer.push_stone(1, False)
-        self.assertEqual(self.board.picked_up_stack.stack_content, right_answer)
+        self.assertEqual(self.board.players[0].picked_up_stack.height(), 3)
 
     def test_move_stack(self):
         self.board.current_x = 3

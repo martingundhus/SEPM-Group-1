@@ -24,6 +24,8 @@ class Stack:
 
     def check_top_stone(self, player_index):
         '''Checks if top stone belongs to player'''
+        if self.height == 0:
+            return False
         topstone = self.stack_content[-1]
         if topstone.player_index == player_index:
             return True
