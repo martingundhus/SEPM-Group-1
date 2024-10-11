@@ -59,8 +59,8 @@ def simulate_move(board, move, owner):
 
 # AI action selection for different levels
 def get_action_level1(board, player):
-
-    if board.turns < 2:
+    piece_color = player
+    if board.round < 2:
         piece_color = 1 - player
     # Random selection for easy difficulty (placeholder)
     moves = board.get_valid_moves(piece_color)
@@ -71,8 +71,9 @@ def get_action_level2(board, player):
     best_move = None
     best_score = -math.inf
     is_first_move = False
+    piece_color = player
 
-    if board.turns < 2:
+    if board.round < 2:
         piece_color = 1 - player
         is_first_move = True
 
@@ -89,8 +90,9 @@ def get_action_level3(board, player):
     best_move = None
     best_score = -math.inf
     is_first_move = False
+    piece_color = player
 
-    if board.turns < 2:
+    if board.round < 2:
         piece_color = 1 - player
         is_first_move = True
     

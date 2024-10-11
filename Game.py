@@ -83,7 +83,7 @@ class MenuGameMode(GameMode):
     def processInput(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.exitMenu()
+                self.ui.quitGame()
                 break
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
@@ -136,20 +136,15 @@ class MenuGameMode(GameMode):
 
         pygame.display.update() 
 
-class TwoPlayerGameMode(GameMode):
-    def __init__(self,ui):
+class PlayGameMode(GameMode):
+    def __init__(self,ui,dificulty):
         self.ui = ui
         self.running = True
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
-
-
         self.winner_found = False
-
         
-        self.round = 0
-
-        self.Board=Board.Board(5,position=(int(170),int(100)))
+        self.Board=Board.Board(5,dificulty,(int(170),int(100)))
         self.selection=graphic.select()
         
         self.width = int((COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size)
@@ -227,7 +222,7 @@ class TwoPlayerGameMode(GameMode):
             x, y = self.selection.get_selection_pos()
             if self.Board.placeStone(x, y, True):
                 self.Board.find_winner()   
-                self.round += 1
+                
             else:
                 self.selection.set_invalid_color()
                 print("Invalid move")
@@ -306,6 +301,7 @@ class TwoPlayerGameMode(GameMode):
                 self.check_winner()
 
 
+
 ###############################################################################
 #                             User Interface                                  #
 ###############################################################################
@@ -331,19 +327,19 @@ class UserInterface():
     def setGameMode(self, gameMode):
         if self.playGameMode is None:
             if(gameMode == '1v1'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,0)
                 self.currentActiveMode = 'Play'
             if(gameMode == 'AI'):
                 self.overlayGameMode.difficultySelection()
             if(gameMode == 'easy'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,1)
                 self.currentActiveMode = 'Play'
                 #change to set AIGameModeEasy
             if(gameMode == 'med'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,2)
                 self.currentActiveMode = 'Play'
             if(gameMode == 'hard'):
-                self.playGameMode = TwoPlayerGameMode(self)
+                self.playGameMode = PlayGameMode(self,3)
                 self.currentActiveMode = 'Play'
             
             

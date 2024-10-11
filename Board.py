@@ -3,6 +3,7 @@ import stone
 import stack
 import Player
 import pygame
+import AI
 from image import Image
 
 import numpy as np
@@ -22,8 +23,12 @@ class tile():
         self.img_grid.draw(screen)
         self.stack.draw(screen,self.position)
 
+    #clears the stack
     def empty(self):
         self.stack=stack.Stack()
+    
+    def is_empty(self):
+        return self.stack.height != 0
 
     def set_stack(self,stack):
         self.stack = stack
@@ -36,7 +41,7 @@ class Board():
     grid_size=100
 
        
-    def __init__(self, board_size, position=(0,0)) -> None:
+    def __init__(self, board_size,dificulty, position=(0,0)) -> None:
         self.board_size = board_size
         self.turn = 0
         self.current_x = -1
@@ -51,6 +56,7 @@ class Board():
         self.img_board=Image("assets/picture/board.png",position)
         self.position=position
         self.error_message = ""
+        self.difficulty = dificulty
         self.init_grid()
 
           
@@ -101,11 +107,28 @@ class Board():
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
     
+## Change turn
+## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
-        if self.turn == 0:
-            self.turn = 1
-        else:
-            self.turn = 0
+        match self.difficulty:
+            case 0: #player vs player
+                if self.turn == 0:
+                    self.turn = 1
+                else:
+                    self.turn = 0
+            case 1:
+                action = AI.get_action_level1(self,0)
+                print(action)
+                # add run_action() here
+            case 2:
+                action = AI.get_action_level2(self,0)
+                print(action)
+                # add run_action() here
+            case 3:
+                action = AI.get_action_level3(self,0)
+                print(action)
+                # add run_action() here
+
         self.round +=1
 
     def getStack(self, x, y):
@@ -113,6 +136,9 @@ class Board():
     
     def emptyTile(self,x,y):
         self.tiles[x][y].empty()
+    
+    def isEmptyTile(self,x,y):
+        return self.tiles[x][y].is_empty()
 
     def placeStone(self, x, y, upright_input):
         if self.isMove:
@@ -182,8 +208,10 @@ class Board():
             self.players[self.turn].pickUpStack(self.getStack(x,y))
             #reset tile
             self.emptyTile(x,y)
-            self.current_x = self.initial_x = x
-            self.current_y = self.initial_y = y
+            self.current_x = x
+            self.initial_x = x
+            self.current_y = y
+            self.initial_y = y
             self.isMove = True
             self.direction = "none"
             self.error_message = ""
@@ -310,18 +338,18 @@ class Board():
     def get_valid_moves(self, player):
         valid_moves = []
         if player == 0:
-            pieces_left = self.players[0][1] #TODO does it update?
+            pieces_left = self.players[0].stonesLeft #TODO does it update?
         else:
-            pieces_left = self.players[1][1]
+            pieces_left = self.players[1].stonesLeft
 
         for row in range(0, 5): #TODO hard coded 5
             for col in range(0, 5): #TODO hard coded 5
                 # if a stack is empty, player can place a stone
-                if self.emptyTile(row, col) and pieces_left > 0:
+                if self.isEmptyTile(row, col) and pieces_left > 0:
                     valid_moves.append(["place", (row, col), 0])
                     valid_moves.append(["place", (row, col), 1])
                 # If the player owns the stack, calculate stack moves
-                elif not self.emptyTile(row, col):
+                elif not self.isEmptyTile(row, col):
                     if self.getStack(row, col).check_top_stone(player):
                         height = self.getStack(row, col).height()
                         travel_paths = self.check_travel_paths(height, row, col)
