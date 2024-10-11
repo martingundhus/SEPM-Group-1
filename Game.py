@@ -144,7 +144,7 @@ class TwoPlayerGameMode(GameMode):
         self.player2 = Player.Player(1,21)
 
 
-        self.winner_found = False
+        #self.winner_found = False
 
         
         self.round = 0
@@ -302,8 +302,8 @@ class TwoPlayerGameMode(GameMode):
         while self.running:
             self.processInput()
             self.render()
-            if not self.winner_found:
-                self.check_winner()
+            #if not self.winner_found:
+            #    self.check_winner()
 
 
 ###############################################################################

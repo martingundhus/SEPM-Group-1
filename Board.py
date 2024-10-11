@@ -48,6 +48,7 @@ class Board():
         self.players = [Player.Player(0,21),Player.Player(1,21)]
         self.isMove = False
         self.round = 0
+        self.winner_found = False
         self.img_board=Image("assets/picture/board.png",position)
         self.position=position
         self.error_message = ""
@@ -108,6 +109,23 @@ class Board():
         else:
             self.turn = 0
         self.round +=1
+
+        if not self.possible_moves_left():
+            winner = self.find_winner()
+            self.winner_found = True
+            if winner == 0:
+                print("Player 1 Wins!")
+                self.winner_found = True
+                self.show_winner_popup("Player 1 Wins!")
+                pygame.quit()
+                sys.exit()
+            elif winner == 1:
+                print("Player 2 Wins!")
+                self.winner_found = True
+                self.show_winner_popup("Player 2 Wins!")
+                pygame.quit()
+                sys.exit()
+            
 
     def getStack(self, x, y):
         return self.tiles[x][y].stack
@@ -300,3 +318,33 @@ class Board():
 
         print("No path found for any player.")
         return None
+
+    def possible_moves_left(self):
+         #check stones left
+        self.stones_left = True
+        if self.turn == 0:
+           if self.players[0].getStonesLeft() == 0:
+               self.stones_left = False
+        else:
+            if self.players[1].getStonesLeft() == 0:
+               self.stones_left = False
+        
+        #check playable tiles left
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.getStack(x,y).height() == 0 or self.getStack(x,y).is_stackable():
+                    if self.stones_left:
+                        return True
+                    else:
+                        #check if there are movable stacks in proximity to playable tile
+                        if (y > 0 and self.getStack(x, y - 1).check_top_stone(self.turn)) or \
+                            (y < self.board_size - 1 and self.getStack(x, y + 1).check_top_stone(self.turn)) or \
+                            (x > 0 and self.getStack(x - 1, y).check_top_stone(self.turn)) or \
+                            (x < self.board_size - 1 and self.getStack(x + 1, y).check_top_stone(self.turn)) or \
+                            (x > 0 and y > 0 and self.getStack(x - 1, y - 1).check_top_stone(self.turn)) or \
+                            (x < self.board_size - 1 and y < self.board_size - 1 and self.getStack(x + 1, y + 1).check_top_stone(self.turn)):
+                            return True
+                        else:
+                            continue
+        return False
+    
