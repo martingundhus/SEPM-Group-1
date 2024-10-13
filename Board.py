@@ -212,7 +212,7 @@ class Board():
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
             self.players[self.turn].pickUpStack(self.getStack(x,y))
             #reset tile
-            self.emptyTile(x,y)
+            #self.emptyTile(x,y)
             self.current_x = x
             self.initial_x = x
             self.current_y = y
@@ -332,7 +332,7 @@ class Board():
 
         print("No path found for any player.")
         return None
-    
+    """
 
     ###############################################################################
     #                             AI UTILITY FUNCTIONS                            #
@@ -520,7 +520,7 @@ class Board():
         if len(possible_moves) > 0:
             return False
         return True
-    """
+    
     def find_winner(self):
         boardStones=np.empty([5,5],dtype=stone.Stone)
 
