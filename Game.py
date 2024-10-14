@@ -142,10 +142,7 @@ class PlayGameMode(GameMode):
         self.running = True
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
-
-
-        #self.winner_found = False
-
+        
         
         self.Board=Board.Board(5,dificulty,(int(170),int(100)))
         self.selection=graphic.select()
@@ -183,19 +180,18 @@ class PlayGameMode(GameMode):
         time.sleep(3)
 
     def check_winner(self):
-        winner = self.Board.find_winner()
-        if winner == 0:
-            print("Player 1 Wins!")
-            self.winner_found = True
-            self.show_winner_popup("Player 1 Wins!")
-            pygame.quit()
-            sys.exit()
-        elif winner == 1:
-            print("Player 2 Wins!")
-            self.winner_found = True
-            self.show_winner_popup("Player 2 Wins!")
-            pygame.quit()
-            sys.exit()
+        print(self.Board.winner_found)
+        if(self.Board.winner_found):
+            if self.Board.winner == 0:
+                print("Player 1 Wins!")
+                self.show_winner_popup("Player 1 Wins!")
+                pygame.quit()
+                sys.exit()
+            elif self.Board.winner == 1:
+                print("Player 2 Wins!")
+                self.show_winner_popup("Player 2 Wins!")
+                pygame.quit()
+                sys.exit()
 
 
     def key_control(self,event):
@@ -261,47 +257,61 @@ class PlayGameMode(GameMode):
 
         pygame.display.update()
     
-
     def draw_instructions(self):
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
-        text = font.render('W,A,S,D to move', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3*2, (self.Board.board_size + 2 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
-
+        i=0
+        xPos=10
+        yPos=130
+        if self.Board.turn==1:
+            xPos=xPos+self.Board.grid_size*7+30
         
-        text = font.render('J: place flat', True, Text_color, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
+        text = font.render('W,A,S,D: move', True, Text_color, Background)
         textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2 )* self.Board.grid_size)
+        textRect.topleft = (xPos, yPos+i)
         self.screen.blit(text, textRect)
+        i=i+30
 
-        text = font.render('K: place standing', True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.3 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+        if self.Board.players[self.Board.turn].picked_up_stack!=None:
+            
+            text=font.render("L: place stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("L: select stack and place", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.3 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+            text=font.render("O: cancel select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("O: cancel select stack", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3 * 2, (self.Board.board_size + 2.6 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+            text=font.render("P: turn over", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
-        text=font.render("P: turn over", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (self.width // 3, (self.Board.board_size + 2.6 )* self.Board.grid_size)
-        self.screen.blit(text, textRect)
+        else:
+            text = font.render('J: place flat', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
 
+            text = font.render('K: place standing', True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
+
+            text=font.render("L: select stack", True, Text_color, Background)
+            textRect = text.get_rect()
+            textRect.topleft = (xPos, yPos+i)
+            self.screen.blit(text, textRect)
+            i=i+30
  
-    def run(self):
-        while self.running:
-            self.processInput()
-            self.render()
-            #if not self.winner_found:
-            #    self.check_winner()
+ 
+            
 
 
 
@@ -369,6 +379,7 @@ class UserInterface():
             # Render game (if any), and then the overlay (if active)
             if self.playGameMode is not None:
                 self.playGameMode.render(self.window)
+                self.playGameMode.check_winner()
             else:
                 self.window.fill((0,0,0))
             if self.currentActiveMode == 'Overlay':

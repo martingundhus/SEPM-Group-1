@@ -1,11 +1,16 @@
 import pygame
-
+from image import Image
 
 class Player:
     def __init__(self, id, stonesLeft):
         self.id = id
         self.stonesLeft = stonesLeft
         self.picked_up_stack = None
+
+        if self.id==1:
+            self.icon=Image("assets/picture/red_flat_stone.png")
+        else:
+            self.icon=Image("assets/picture/blue_flat_stone.png")
     
     def pickUpStack(self,stack):
         self.picked_up_stack = stack
@@ -30,34 +35,34 @@ class Player:
         center_x = Board.grid_size
         Background = (197, 209, 235)
         Text_color = (45, 45, 42)
-        if(self.id == 1):
-            center_x = Board.grid_size*8
+        #if(self.id == 1):
+        #    center_x = Board.grid_size*8
+        xPos=10
+        yPos=130
+        if self.id ==1:
+            xPos=xPos+Board.grid_size*7+30
 
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 32)
-        text = font.render('Player ' + str(self.id+1), True, Text_color, Background)
-        textRect = text.get_rect()
-        # set the center of the rectangular object.
-        textRect.top = (Board.grid_size*1.5)
-        textRect.centerx = (center_x)
-        screen.blit(text, textRect)
+        self.icon.set_position(xPos,20)
+        self.icon.draw(screen)
 
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 25)
-        stones_left = font.render('Stones left:', True, Text_color, Background)
+        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 30)
+        stones_left = font.render(f"X:{self.stonesLeft}", True, Text_color, Background)
         stonesRect = stones_left.get_rect()
-        stonesRect.center = (center_x, Board.grid_size*3)
+        stonesRect.topleft = (xPos+100, 70)
         screen.blit(stones_left,stonesRect)
 
-        text = font.render(str(self.stonesLeft), True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (center_x, Board.grid_size*3.5)
-        screen.blit(text,textRect)
 
         if(self.picked_up_stack != None):
+            # draw stack
+            pygame.draw.rect(screen, (0,0,0), (xPos,yPos+270,155,250), 1)
+            self.picked_up_stack.draw(screen,(xPos+30,500))
+
+            
+            font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 25)
             text = font.render("Picked up stack", True, Text_color, Background)
             textRect = text.get_rect()
-            textRect.center = (center_x, Board.grid_size*4.3)
+            textRect.topleft = (xPos, Board.grid_size*3.6)
             screen.blit(text,textRect)
-            self.picked_up_stack.draw(screen,(center_x - Board.grid_size/2, Board.grid_size*5))
 
     
    

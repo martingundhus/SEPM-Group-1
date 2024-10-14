@@ -58,7 +58,10 @@ class Board():
         self.position=position
         self.error_message = ""
         self.difficulty = dificulty
+        self.winner_found = False
         self.init_grid()
+
+        
 
           
     def init_grid(self):
@@ -80,14 +83,14 @@ class Board():
             for x in range(5):
                 self.tiles[y,x].draw(screen)
 
-        center_x = self.grid_size * (self.board_size + 3.5)
-        Background = (197, 209, 235)
-        Text_color = (45, 45, 42)
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 40)
-        text = font.render('Player ' + str(self.turn+1) +"s turn", True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (center_x // 2, self.grid_size // 2)
-        screen.blit(text, textRect)
+        if self.turn==1:
+            self.turn_Icon=Image("assets/picture/red_flat_stone.png")
+        else:
+            self.turn_Icon=Image("assets/picture/blue_flat_stone.png")
+        
+        center_X=self.grid_size *4
+        self.turn_Icon.set_position(center_X,10)
+        self.turn_Icon.draw(screen)
 
     def draw(self,screen):
         self.draw_board(screen)
@@ -111,26 +114,47 @@ class Board():
 ## Change turn
 ## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
-        match self.difficulty:
-            case 0: #player vs player
-                if self.turn == 0:
-                    self.turn = 1
-                else:
-                    self.turn = 0
-            case 1:
-                action = AI.get_action_level1(self,0)
-                print(action)
-                # add run_action() here
-            case 2:
-                action = AI.get_action_level2(self,0)
-                print(action)
-                # add run_action() here
-            case 3:
-                action = AI.get_action_level3(self,0)
-                print(action)
-                # add run_action() here
+        self.winner_found, self.winner = self.find_winner()
+        
+        if self.difficulty ==  0: #player vs player
+            self.players[self.turn].picked_up_stack=None
+            self.isMove = False
+            if self.turn == 0:
+                self.turn = 1
+            else:
+                self.turn = 0
+        if self.difficulty== 1:
+            action = AI.get_action_level1(self,0)
+            print(action)
+            # add run_action() here
+        if self.difficulty == 2:
+            action = AI.get_action_level2(self,0)
+            print(action)
+            # add run_action() here
+        if self.difficulty == 3:
+            action = AI.get_action_level3(self,0)
+            print(action)
+            # add run_action() here
 
         self.round +=1
+        
+
+        if not self.possible_moves_left():
+            winner = self.find_winner()
+            self.winner_found = True
+            if winner == 0:
+                print("Player 1 Wins!")
+                self.winner_found = True
+                self.show_winner_popup("Player 1 Wins!")
+                pygame.quit()
+                sys.exit()
+            elif winner == 1:
+                print("Player 2 Wins!")
+                self.winner_found = True
+                self.show_winner_popup("Player 2 Wins!")
+                pygame.quit()
+                sys.exit()
+            
 
         if not self.possible_moves_left():
             winner = self.find_winner()
@@ -225,7 +249,7 @@ class Board():
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
             self.players[self.turn].pickUpStack(self.getStack(x,y))
             #reset tile
-            self.emptyTile(x,y)
+            #self.emptyTile(x,y)
             self.current_x = x
             self.initial_x = x
             self.current_y = y
@@ -288,7 +312,7 @@ class Board():
             self.players[self.turn].picked_up_stack = None
 
     
-
+    """
     def find_winner(self):
         visited = set()
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -374,7 +398,7 @@ class Board():
                         else:
                             continue
         return False
-        
+        """
 
     ###############################################################################
     #                             AI UTILITY FUNCTIONS                            #
@@ -562,3 +586,124 @@ class Board():
         if len(possible_moves) > 0:
             return False
         return True
+    
+    def find_winner(self):
+        boardStones=np.empty([5,5],dtype=stone.Stone)
+
+        ## get the top stone 
+        for y in range(5):
+            for x in range(5):
+                
+                ##get top stone
+                if self.tiles[y,x].stack.height()>0:
+                    theStone=self.tiles[y,x].stack.stack_content[-1]
+                    ## dont need upright stone
+                    if theStone.upright==False:
+                        boardStones[y,x]=theStone
+                    else:
+                        boardStones[y,x]=None
+        
+        ##check top left edge stone
+        startedIndex=np.array([[0,0],[0,1],[0,2],[0,3],[0,4],
+                                [0,0],[1,0],[2,0],[3,0],[4,0]])
+        win=False
+        for index in startedIndex:
+            y,x= index
+            theStone=boardStones[y,x]
+            if theStone !=None:
+                ## Know whose stone belongs to
+                player_index=theStone.player_index
+                
+                ## init visted and find connect
+                self.visited=np.empty([0,2])
+                self.visited=np.append(self.visited,[[y,x]],axis=0)
+                self.findConnect(boardStones,index,player_index)
+                #print(player_index)
+                #print(self.visited)
+                
+                
+                ## check win condition
+                ## check top down
+                top=np.array([[0,0],[0,1],[0,2],[0,3],[0,4]])
+                down=np.array([[4,0],[4,1],[4,2],[4,3],[4,4]])
+                topCheck=False
+                downCheck=False
+                
+                for item in top:
+                    y,x=item
+                    if [y,x] in self.visited.tolist():
+                        topCheck=True
+
+                for item in down:
+                    y,x=item
+                    if [y,x] in self.visited.tolist():
+                        downCheck=True
+                
+                if topCheck and downCheck:
+                    win=True
+                    print(f"!!player {player_index} win")
+                    return win,player_index
+                
+
+                ## check left right
+                left=np.array([[0,0],[1,0],[2,0],[3,0],[4,0]])
+                right=np.array([[0,4],[1,4],[2,4],[3,4],[4,4]])
+
+                leftCheck=False
+                rightCheck=False
+                for item in left:
+                    x,y=item
+                    if [x,y] in self.visited.tolist():
+                        leftCheck=True
+                for item in right:
+                    x,y=item
+                    if [x,y] in self.visited.tolist():
+                        rightCheck=True
+                
+                if leftCheck and rightCheck:
+                    win=True
+                    print(f"!!player {player_index} win")
+                    return win,player_index
+                
+        player_index=-1
+        print("!!Not found win!!")
+        return win,player_index
+
+    def findConnect(self,boardStones,index,player_index):
+        
+        y,x=index
+        ##top
+        if 0<=y-1<=4 and 0<=x<=4:
+            row_to_check=[y-1,x]
+            if boardStones[y-1,x]!=None:
+                theStone= boardStones[y-1,x]
+                if theStone.player_index==player_index and np.any(np.all(self.visited==row_to_check,axis=1))==False:
+                    self.visited=np.append(self.visited,[[y-1,x]],axis=0)
+                    self.findConnect(boardStones,[y-1,x],player_index)
+        ##down
+        if 0<=y+1<=4 and 0<=x<=4:
+            row_to_check=[y+1,x]
+            if boardStones[y+1,x]!=None:
+                theStone= boardStones[y+1,x]
+                if theStone.player_index==player_index and np.any(np.all(self.visited==row_to_check,axis=1))==False:
+                    self.visited=np.append(self.visited,[[y+1,x]],axis=0)
+                    self.findConnect(boardStones,[y+1,x],player_index)
+        ##right
+        if 0<=y<=4 and 0<=x-1<=4:
+            row_to_check=[y,x-1]
+            if boardStones[y,x-1]!=None:
+                theStone=boardStones[y,x-1]
+                if theStone.player_index==player_index and np.any(np.all(self.visited==row_to_check,axis=1))==False:
+                    self.visited=np.append(self.visited,[[y,x-1]],axis=0)
+                    self.findConnect(boardStones,[y,x-1],player_index)
+        
+        ##left
+        if 0<=y<=4 and 0<=x+1<=4:
+            row_to_check=[y,x+1]
+            if boardStones[y,x+1]!=None:
+                theStone=boardStones[y,x+1]
+                if theStone.player_index==player_index and np.any(np.all(self.visited==row_to_check,axis=1))==False:
+                    self.visited=np.append(self.visited,[[y,x+1]],axis=0)
+                    self.findConnect(boardStones,[y,x+1],player_index)
+                
+        
