@@ -115,6 +115,8 @@ class Board():
 ## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
         self.winner_found, self.winner = self.find_winner()
+        if not self.possible_moves_left():
+            self.winner_found, self.winner = self.majority_tiles()
         
         if self.difficulty ==  0: #player vs player
             self.players[self.turn].picked_up_stack=None
@@ -138,41 +140,6 @@ class Board():
 
         self.round +=1
         
-
-        if not self.possible_moves_left():
-            winner = self.find_winner()
-            self.winner_found = True
-            if winner == 0:
-                print("Player 1 Wins!")
-                self.winner_found = True
-                self.show_winner_popup("Player 1 Wins!")
-                pygame.quit()
-                sys.exit()
-            elif winner == 1:
-                print("Player 2 Wins!")
-                self.winner_found = True
-                self.show_winner_popup("Player 2 Wins!")
-                pygame.quit()
-                sys.exit()
-            
-
-        if not self.possible_moves_left():
-            winner = self.find_winner()
-            self.winner_found = True
-            if winner == 0:
-                print("Player 1 Wins!")
-                self.winner_found = True
-                self.show_winner_popup("Player 1 Wins!")
-                pygame.quit()
-                sys.exit()
-            elif winner == 1:
-                print("Player 2 Wins!")
-                self.winner_found = True
-                self.show_winner_popup("Player 2 Wins!")
-                pygame.quit()
-                sys.exit()
-            
-
     def getStack(self, x, y):
         return self.tiles[x][y].stack
     
@@ -369,7 +336,24 @@ class Board():
 
         print("No path found for any player.")
         return None
-
+"""
+    def majority_tiles(self):
+        self.first_player = 0
+        self.second_player = 0
+        for x in range(self.board_size):
+            for y in range(self.board_size):
+                if self.getStack(x,y).height() > 0: 
+                    if self.getStack(x,y).check_top_stone(0):
+                        self.first_player += 1
+                    else:
+                        self.second_player += 1
+        if self.first_player > self.second_player:
+            return True, 0
+        elif self.first_player < self.second_player:
+            return True, 1
+        else:
+            return True, 2
+        
     def possible_moves_left(self):
          #check stones left
         self.stones_left = True
@@ -398,7 +382,7 @@ class Board():
                         else:
                             continue
         return False
-        """
+   
 
     ###############################################################################
     #                             AI UTILITY FUNCTIONS                            #
