@@ -216,7 +216,7 @@ class Board():
         if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
             self.players[self.turn].pickUpStack(self.getStack(x,y))
             #reset tile
-            #self.emptyTile(x,y)
+            self.emptyTile(x,y)
             self.current_x = x
             self.initial_x = x
             self.current_y = y
