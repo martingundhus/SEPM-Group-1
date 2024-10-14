@@ -57,6 +57,7 @@ class Board():
         self.position=position
         self.error_message = ""
         self.difficulty = dificulty
+        self.winner_found = False
         self.init_grid()
 
         
@@ -112,26 +113,27 @@ class Board():
 ## Change turn
 ## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
-        match self.difficulty:
-            case 0: #player vs player
-                self.players[self.turn].picked_up_stack=None
-                self.isMove = False
-                if self.turn == 0:
-                    self.turn = 1
-                else:
-                    self.turn = 0
-            case 1:
-                action = AI.get_action_level1(self,0)
-                print(action)
-                # add run_action() here
-            case 2:
-                action = AI.get_action_level2(self,0)
-                print(action)
-                # add run_action() here
-            case 3:
-                action = AI.get_action_level3(self,0)
-                print(action)
-                # add run_action() here
+        self.winner_found, self.winner = self.find_winner()
+        
+        if self.difficulty ==  0: #player vs player
+            self.players[self.turn].picked_up_stack=None
+            self.isMove = False
+            if self.turn == 0:
+                self.turn = 1
+            else:
+                self.turn = 0
+        if self.difficulty== 1:
+            action = AI.get_action_level1(self,0)
+            print(action)
+            # add run_action() here
+        if self.difficulty == 2:
+            action = AI.get_action_level2(self,0)
+            print(action)
+            # add run_action() here
+        if self.difficulty == 3:
+            action = AI.get_action_level3(self,0)
+            print(action)
+            # add run_action() here
 
         self.round +=1
         

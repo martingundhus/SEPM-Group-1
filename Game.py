@@ -142,7 +142,7 @@ class PlayGameMode(GameMode):
         self.running = True
         self.player1 = Player.Player(0,21)
         self.player2 = Player.Player(1,21)
-        self.winner_found = False
+        
         
         self.Board=Board.Board(5,dificulty,(int(170),int(100)))
         self.selection=graphic.select()
@@ -180,19 +180,18 @@ class PlayGameMode(GameMode):
         time.sleep(3)
 
     def check_winner(self):
-        winner = self.Board.find_winner()
-        if winner == 0:
-            print("Player 1 Wins!")
-            self.winner_found = True
-            self.show_winner_popup("Player 1 Wins!")
-            pygame.quit()
-            sys.exit()
-        elif winner == 1:
-            print("Player 2 Wins!")
-            self.winner_found = True
-            self.show_winner_popup("Player 2 Wins!")
-            pygame.quit()
-            sys.exit()
+        print(self.Board.winner_found)
+        if(self.Board.winner_found):
+            if self.Board.winner == 0:
+                print("Player 1 Wins!")
+                self.show_winner_popup("Player 1 Wins!")
+                pygame.quit()
+                sys.exit()
+            elif self.Board.winner == 1:
+                print("Player 2 Wins!")
+                self.show_winner_popup("Player 2 Wins!")
+                pygame.quit()
+                sys.exit()
 
 
     def key_control(self,event):
@@ -311,12 +310,8 @@ class PlayGameMode(GameMode):
             self.screen.blit(text, textRect)
             i=i+30
  
-    def run(self):
-        while self.running:
-            self.processInput()
-            self.render()
-            if not self.winner_found:
-                self.check_winner()
+ 
+            
 
 
 
@@ -384,6 +379,7 @@ class UserInterface():
             # Render game (if any), and then the overlay (if active)
             if self.playGameMode is not None:
                 self.playGameMode.render(self.window)
+                self.playGameMode.check_winner()
             else:
                 self.window.fill((0,0,0))
             if self.currentActiveMode == 'Overlay':
