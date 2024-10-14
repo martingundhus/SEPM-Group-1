@@ -192,6 +192,11 @@ class PlayGameMode(GameMode):
                 self.show_winner_popup("Player 2 Wins!")
                 pygame.quit()
                 sys.exit()
+            elif self.Board.winner == 2:
+                print("Stalemate!")
+                self.show_winner_popup("Stalemate!")
+                pygame.quit()
+                sys.exit()
 
 
     def key_control(self,event):

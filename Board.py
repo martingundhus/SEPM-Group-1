@@ -153,6 +153,9 @@ class Board():
         if self.isMove:
             return False
         player_index = self.turn
+        if self.players[player_index].getStonesLeft() == 0:
+            self.error_message = "You have no stones left"
+            return False
         if self.round < 2:
             player_index = (self.turn+1)%2
         if self.getStack(x,y).is_stackable():
