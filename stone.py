@@ -17,6 +17,15 @@ class Stone:
             self.img_stone=Image("assets/picture/blue_stand_stone.png")
         if player_index==1 and self.upright==True:
             self.img_stone=Image("assets/picture/red_stand_stone.png")
+
+    def __deepcopy__(self, memo):
+        # Create a new Stone instance with the same player_index and upright values
+        new_stone = Stone(self.player_index, self.upright)
+
+        # Assign the existing img_stone (no deepcopy, just reference the same image)
+        new_stone.img_stone = self.img_stone  # No need to deep copy the image
+
+        return new_stone
         
     def draw(self,screen,x,y):
         self.img_stone.set_position(x,y)

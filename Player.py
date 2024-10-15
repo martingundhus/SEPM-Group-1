@@ -1,5 +1,6 @@
 import pygame
 from image import Image
+from copy import deepcopy
 
 class Player:
     def __init__(self, id, stonesLeft):
@@ -11,6 +12,18 @@ class Player:
             self.icon=Image("assets/picture/red_flat_stone.png")
         else:
             self.icon=Image("assets/picture/blue_flat_stone.png")
+
+    def __deepcopy__(self, memo):
+        # Create a new Player instance with the same id and stonesLeft
+        new_player = Player(self.id, self.stonesLeft)
+
+        # Assign the existing icon (no deepcopy, just reference the same image)
+        new_player.icon = self.icon  # No need to deep copy the icon
+
+        # Copy any other attributes if necessary
+        new_player.picked_up_stack = deepcopy(self.picked_up_stack, memo)
+
+        return new_player
     
     def pickUpStack(self,stack):
         self.picked_up_stack = stack

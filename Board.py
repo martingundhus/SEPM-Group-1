@@ -5,6 +5,8 @@ import Player
 import pygame
 import AI
 from image import Image
+import copy
+from copy import deepcopy
 
 import numpy as np
 
@@ -15,6 +17,18 @@ class tile():
         self.img_grid=Image(grid_path,position)
         self.position=position
         self.stack=stack.Stack()
+
+    def __deepcopy__(self, memo):
+        # Create a new tile object without copying the graphical component (img_grid)
+        new_tile = tile(None, self.position)  # Pass None or skip grid_path as we don’t deepcopy the image
+        
+        # Manually deep copy game-related attributes
+        new_tile.stack = deepcopy(self.stack, memo)  # Deep copy the stack
+        
+        # Shallow copy the image or skip (graphical elements don’t need deep copying)
+        new_tile.img_grid = self.img_grid  # Just reference the same image (no need to copy)
+        
+        return new_tile
     
     def add_stone(self,player_index, upright_input):
         self.stack.push_stone(player_index, upright_input)
@@ -40,7 +54,35 @@ class Board():
     offset_y=31
     grid_size=100
 
-       
+    def __deepcopy__(self, memo):
+        # Create a shallow copy of the Board instance
+        new_board = Board(self.board_size, self.difficulty, self.position)
+
+        # Deepcopy only game-related attributes (skip graphical ones)
+        new_board.turn = deepcopy(self.turn, memo)
+        new_board.current_x = self.current_x
+        new_board.current_y = self.current_y
+        new_board.initial_x = self.initial_x
+        new_board.initial_y = self.initial_y
+        new_board.direction = self.direction
+        new_board.players = deepcopy(self.players, memo)
+        new_board.isMove = self.isMove
+        new_board.round = self.round
+        new_board.winner_found = self.winner_found
+
+        # Deepcopy game logic part of tiles, but skip or shallow-copy graphical assets
+        new_board.tiles = np.empty((5, 5), dtype=tile)
+        for y in range(5):
+            for x in range(5):
+                # Shallow copy or skip the tile's image, deep copy only the game-related info
+                new_board.tiles[y, x] = copy.copy(self.tiles[y, x])  # Shallow copy the tile object itself
+                new_board.tiles[y, x].stack = deepcopy(self.tiles[y, x].stack, memo)  # Deepcopy the stack
+
+        # Skip copying the img_board or other graphical components
+        new_board.img_board = self.img_board  # Don't deepcopy, just assign
+
+        return new_board
+   
     def __init__(self, board_size,dificulty, position=(0,0)) -> None:
         self.board_size = board_size
         self.turn = 0
