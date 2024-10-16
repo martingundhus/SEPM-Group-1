@@ -1,20 +1,12 @@
-from collections import deque
-import stone
+
+import AI_stone
 
 class Stack:
     def __init__(self):
         self.stack_content = list()
         self.stackable = True
     
-    def draw(self,screen,position=(0,0)):
-         if self.height() > 0:
-            for i in range(self.height()):
-                x,y=position
-                self.stack_content[i].draw(screen,x,y-15*i)
-
-    
-
-    
+   
     # returns amount of stones in stack (length of queue)
     def height(self):
         return len(self.stack_content)
@@ -35,11 +27,11 @@ class Stack:
     def push_stone(self, player_index, upright_input):
         
         if upright_input == True:
-            new_stone = stone.Stone(player_index,True)
+            new_stone = AI_stone.AI_Stone(player_index,True)
             self.stackable = False
             self.stack_content.append(new_stone)
         else:
-            new_stone = stone.Stone(player_index,False)
+            new_stone = AI_stone.AI_Stone(player_index,False)
             self.stack_content.append(new_stone)
 
     '''Drops a stone from the stack to the next stack'''

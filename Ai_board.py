@@ -1,38 +1,15 @@
-
-import stone
 import stack
 import Player
-import pygame
-import AI
-import Ai_board
-from image import Image
-import copy
-from copy import deepcopy
-
+import AI_stone
 import numpy as np
 
-
-
-class tile():
-    def __init__(self,grid_path,position=(0,0)) -> None:
-        self.img_grid=Image(grid_path,position)
-        self.position=position
-        self.stack=stack.Stack()
-
-
-    def __deepcopy__(self, memo):
-        # Create a new tile object without copying the graphical component (img_grid)
-        stack = deepcopy(self.stack, memo)
-        new_tile = Ai_board.Ai_tile(stack)  # Pass None or skip grid_path as we don’t deepcopy the image
-            
-        return new_tile
+class Ai_tile():
+    def __init__(self, stack) -> None:
+        self.stack=stack
     
     def add_stone(self,player_index, upright_input):
         self.stack.push_stone(player_index, upright_input)
     
-    def draw(self,screen):
-        self.img_grid.draw(screen)
-        self.stack.draw(screen,self.position)
 
     #clears the stack
     def empty(self):
@@ -44,146 +21,38 @@ class tile():
     def set_stack(self,stack):
         self.stack = stack
     
-        
+  
 
-class Board():
-    offset_x=31
-    offset_y=31
-    grid_size=100
-
-    def __deepcopy__(self, memo):
-        # Create a shallow copy of the Board instance
-        tiles = deepcopy(self.tiles, memo)
-        players = deepcopy(self.players, memo)
-        new_board = Ai_board.Ai_board(self.board_size, self.difficulty, tiles, players)
-
-        # new_board.isMove = self.isMove
-        new_board.round = deepcopy(self.round)
-        new_board.winner_found = deepcopy(self.winner_found)
-        return new_board
-   
-    def __init__(self, board_size,dificulty, position=(0,0)) -> None:
+class Ai_board():
+    def __init__(self, board_size,dificulty, tiles, players) -> None:
         self.board_size = board_size
-        self.turn = 0
-        self.current_x = -1
-        self.current_y = -1
-        #square where stack was picked up from
-        self.initial_x = -1
-        self.initial_y = -1
-        self.direction = "none"
-        self.players = [Player.Player(0,21),Player.Player(1,21)]
-        self.isMove = False
+        self.players = players
+        self.tiles = tiles
         self.round = 0
-        self.winner_found = False
-        self.img_board=Image("assets/picture/board.png",position)
-        self.position=position
-        self.error_message = ""
+       
         self.difficulty = dificulty
         self.winner_found = False
-        self.init_grid()
-
-        
-
-          
-    def init_grid(self):
-            orig_x,orig_y=self.position
-            self.tiles=np.empty((5,5),dtype=tile)
-            for y in range(5):
-                for x in range(5):
-                    index=int((x+y)%2)
-                    if index==0:
-                        self.tiles[y,x]=tile("assets/picture/white_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
-                                                                                orig_y+Board.offset_y+y*Board.grid_size))
-                    elif index==1:
-                        self.tiles[y,x]=tile("assets/picture/brown_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
-                                                                                orig_y+Board.offset_y+y*Board.grid_size))
     
-    def draw_board(self,screen):
-        self.img_board.draw(screen)
-        for y in range(5):
-            for x in range(5):
-                self.tiles[y,x].draw(screen)
 
-        if self.turn==1:
-            self.turn_Icon=Image("assets/picture/red_flat_stone.png")
-        else:
-            self.turn_Icon=Image("assets/picture/blue_flat_stone.png")
-        
-        center_X=self.grid_size *4
-        self.turn_Icon.set_position(center_X,10)
-        self.turn_Icon.draw(screen)
-
-    def draw(self,screen):
-        self.draw_board(screen)
-        self.players[0].draw_player_stats(screen,self)
-        self.players[1].draw_player_stats(screen,self)
-        self.draw_error_message(screen)
-    
-    def draw_error_message(self,screen):
-        Background = (197, 209, 235)
-        Text_color = (181, 49, 32)
-        center_x = self.grid_size * (self.board_size + 3.5)
-        font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
-        text = font.render(self.error_message, True, Text_color, Background)
-        textRect = text.get_rect()
-        textRect.center = (center_x // 2, self.grid_size - 10)
-        screen.blit(text, textRect)
-
-    def hasSelected(self):
-        return (self.picked_up_stack.height() > 0)
-    
-## Change turn
-## If user plays against AI, game mode > 0, and an AI action is requested
-    def changeTurn(self):
-        self.winner_found, self.winner = self.find_winner()
-        if not self.possible_moves_left():
-            self.winner_found, self.winner = self.majority_tiles()
-        
-        self.players[self.turn].picked_up_stack=None
-        self.isMove = False
-        if self.turn == 0:
-            self.turn = 1
-        else:
-            self.turn = 0
-        
-        if self.difficulty== 1 and self.turn == 1:
-            action = AI.get_action_level1(self,0)
-            self.apply_action(action)
-            print(action)
-            # add run_action() here
-        if self.difficulty == 2 and self.turn == 1:
-            action = AI.get_action_level2(self,0)
-            self.apply_action(action)
-            print(action)
-            # add run_action() here
-        if self.difficulty == 3 and self.turn == 1:
-            action = AI.get_action_level3(self,0)
-            self.apply_action(action, )
-            print(action)
-            # add run_action() here
-
-        self.round +=1
-
-    ## applies the action, if is_test==True the game state variables such as turn will not update, allowing ai to place multiple times in a row
-    def apply_action(self, action):
+    def apply_action(self, action, owner):
         if action[0] == 'move':
-            self.apply_move(action)
+            self.apply_move(action, owner)
         if action[0] == 'place':
-            self.apply_place(action)
+            self.apply_place(action, owner)
 
-    def apply_place(self,action):
+    def apply_place(self,action, owner):
         row,col = action[1]
         orientation = action[2]
-        self.placeStone(col,row,orientation)
+        self.placeStone(col,row,orientation, owner)
     
-    def apply_move(self,action):
+    def apply_move(self,action, owner):
         row,col = action[1]
         direction = action[2]
         placements = action[3]
-        self.pickUpStack(col,row)
+        self.pickUpStack(col,row, owner)
         for placement in placements:
             for i in range(placement):
-                self.moveStack(col,row)
+                self.moveStack(col,row, owner)
             # move x,y to next position according to direction
             if direction == 0: #down
                 row -= 1
@@ -203,135 +72,20 @@ class Board():
     def isEmptyTile(self,x,y):
         return self.tiles[x][y].is_empty()
 
-    def placeStone(self, x, y, upright_input):
-        if self.isMove:
-            return False
-        player_index = self.turn
-        if self.players[player_index].getStonesLeft() == 0:
-            self.error_message = "You have no stones left"
-            return False
-        if self.round < 2:
-            player_index = (self.turn+1)%2
-        if self.getStack(x,y).is_stackable():
-            self.getStack(x,y).push_stone(player_index, upright_input) 
-            self.changeTurn()
-            self.players[player_index].useStone()
-            self.error_message = ""
-            return True
-        else:
-            self.error_message = "Invalid tile to place stone"
-            return False
-    
-   
-
-    def checkLeft(self, x, y):
-        if (x != 0 and self.getStack(x-1,y).stackable):
-            return True
-        else:
-            return False
-            
-    def checkRight(self, x, y):
-        if ( x != 4 and self.getStack(x+1,y).stackable):
-            return True
-        else:
-            return False
-
-    def checkDown(self, x, y):
-        if (y != 0 and self.getStack(x, y-1).stackable):
-            return True
-        else:
-            return False
-
-    def checkUp(self, x, y):
-        if (y != 4 and self.getStack(x,y+1).stackable):
-            return True
-        else:
-            return False
-
-
-    def isValidMove(self, xFrom, xTo, yFrom, yTo):
-        if (self.getStack(yFrom, yTo).stackable):
-            if (xFrom > xTo):
-                if (self.checkLeft(xFrom, yFrom)):
-                     return True
-            else:
-                if (self.checkRight(xFrom, yFrom)):
-                     return True
-            if (yFrom > yTo):
-                if (self.checkDown(xFrom, yFrom)):
-                     return True
-            else:
-                if (self.checkUp(xFrom, yFrom)):
-                     return True
-
-    def pickUpStack(self, x, y):        
+    def placeStone(self, x, y, upright_input, owner):
+        self.getStack(x,y).push_stone(owner,upright_input)
+        self.players[owner].useStone()
         
-        if self.getStack(x,y).height() >= 1 and self.getStack(x,y).check_top_stone(self.turn):
-            self.players[self.turn].pickUpStack(self.getStack(x,y))
-            #reset tile
-            self.emptyTile(x,y)
-            self.current_x = x
-            self.initial_x = x
-            self.current_y = y
-            self.initial_y = y
-            self.isMove = True
-            self.direction = "none"
-            self.error_message = ""
-            return True
-        else:
-            self.error_message = "Cannot pick up stack"
-            return False
+
+    def pickUpStack(self, x, y, owner):
+        self.players[owner].pickUpStack(self.getStack(x,y))
         
- 
-
-    def moveStack(self, xTo, yTo):
-       
-        if (self.isValidMove(self.current_x, self.current_y, xTo, yTo)):
-            if (self.direction == "none"): #If first move direction has to be set
-                if (self.current_x > xTo and self.current_y == yTo):
-                    self.direction = "left"
-                elif (self.current_x < xTo and self.current_y == yTo):
-                    self.direction = "right"
-                elif (self.current_y > yTo and self.current_x == xTo):
-                    self.direction = "down"
-                elif (self.current_y < yTo and self.current_x == xTo):
-                    self.direction = "up"
-            if self.current_x == xTo and self.current_y == yTo:  # Allows player to place multiple stones without moving
-                self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
-            elif self.direction == "up" and self.current_y < yTo and self.current_x == xTo or \
-            self.direction == "down" and self.current_y > yTo and self.current_x == xTo or \
-            self.direction == "left" and self.current_x > xTo and self.current_y == yTo or \
-            self.direction == "right" and self.current_x < xTo and self.current_y == yTo:
-                self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
-
-            # Update position based on direction
-                if self.direction in ["up", "down"]:
-                    self.current_y = yTo
-                elif self.direction in ["left", "right"]:
-                    self.current_x = xTo
-            else:
-                self.error_message = "Have to move in one direction"
-                return False
+        
+    def moveStack(self, xTo, yTo, owner):
+        self.players[owner].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
             
-            if self.players[self.turn].picked_up_stack.height() == 0:
-                self.players[self.turn].picked_up_stack = None
-                self.changeTurn()
-                self.isMove = False
-            self.error_message = ""
-            return True
-        else:
-            self.error_message = "Cannot move this stack"
-            return False
-    
+        
 
-    def resetMove(self):
-       
-        if(self.isMove and self.current_x == self.initial_x and self.current_y == self.initial_y):
-            self.isMove = False
-            self.tiles[self.current_x, self.current_y].set_stack(self.players[self.turn].picked_up_stack)
-            self.players[self.turn].picked_up_stack = None
-
-    
     def majority_tiles(self):
         self.first_player = 0
         self.second_player = 0
@@ -508,7 +262,7 @@ class Board():
             for col in range(5): #TODO hardcoded 5 :/
                 stack = self.getStack(col, row)
                 if stack.check_top_stone(player) and stack.is_stackable():
-                    control_score += 5
+                    control_score += 10
         return control_score
     
     def evaluate_blocking(self, player):
@@ -567,7 +321,7 @@ class Board():
         return True
     
     def find_winner(self):
-        boardStones=np.empty([5,5],dtype=stone.Stone)
+        boardStones=np.empty([5,5],dtype=AI_stone.AI_Stone)
 
         ## get the top stone 
         for y in range(5):
@@ -686,3 +440,5 @@ class Board():
                     self.findConnect(boardStones,[y,x+1],player_index)
                 
         
+
+   

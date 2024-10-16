@@ -180,7 +180,6 @@ class PlayGameMode(GameMode):
         time.sleep(3)
 
     def check_winner(self):
-        print(self.Board.winner_found)
         if(self.Board.winner_found):
             if self.Board.winner == 0:
                 print("Player 1 Wins!")
