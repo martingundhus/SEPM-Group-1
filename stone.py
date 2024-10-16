@@ -1,6 +1,4 @@
 import pygame
-import AI_stone
-from copy import deepcopy
 from image import Image
 
 class Stone:
@@ -20,16 +18,7 @@ class Stone:
         if player_index==1 and self.upright==True:
             self.img_stone=Image("assets/picture/red_stand_stone.png")
 
-    def __deepcopy__(self, memo):
-        # Create a new Stone instance with the same player_index and upright values
-        player_index = deepcopy(self.player_index)
-        upright = deepcopy(self.upright)
-        new_stone = AI_stone.AI_Stone(player_index, upright)
 
-        # Assign the existing img_stone (no deepcopy, just reference the same image)
-        #new_stone.img_stone = self.img_stone  # No need to deep copy the image
-
-        return new_stone
         
     def draw(self,screen,x,y):
         self.img_stone.set_position(x,y)

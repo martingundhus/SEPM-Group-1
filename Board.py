@@ -1,14 +1,11 @@
 
+import ai_logic.ai_logic as ai_logic
 import stone
 import stack
 import Player
 import pygame
-import AI
-import Ai_board
+import ai_logic.ai_logic as ai_logic
 from image import Image
-import copy
-from copy import deepcopy
-
 import numpy as np
 
 
@@ -19,13 +16,6 @@ class tile():
         self.position=position
         self.stack=stack.Stack()
 
-
-    def __deepcopy__(self, memo):
-        # Create a new tile object without copying the graphical component (img_grid)
-        stack = deepcopy(self.stack, memo)
-        new_tile = Ai_board.Ai_tile(stack)  # Pass None or skip grid_path as we don’t deepcopy the image
-            
-        return new_tile
     
     def add_stone(self,player_index, upright_input):
         self.stack.push_stone(player_index, upright_input)
@@ -51,16 +41,6 @@ class Board():
     offset_y=31
     grid_size=100
 
-    def __deepcopy__(self, memo):
-        # Create a shallow copy of the Board instance
-        tiles = deepcopy(self.tiles, memo)
-        players = deepcopy(self.players, memo)
-        new_board = Ai_board.Ai_board(self.board_size, self.difficulty, tiles, players)
-
-        # new_board.isMove = self.isMove
-        new_board.round = deepcopy(self.round)
-        new_board.winner_found = deepcopy(self.winner_found)
-        return new_board
    
     def __init__(self, board_size,dificulty, position=(0,0)) -> None:
         self.board_size = board_size
@@ -98,6 +78,7 @@ class Board():
                         self.tiles[y,x]=tile("assets/picture/brown_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
                                                                                 orig_y+Board.offset_y+y*Board.grid_size))
     
+
     def draw_board(self,screen):
         self.img_board.draw(screen)
         for y in range(5):
@@ -132,6 +113,16 @@ class Board():
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
     
+
+    # Returns the action chosen by the AI agent
+    def get_action(self, player):
+        if self.difficulty == 1:
+            return ai_logic.get_action_level1(self,player)
+        elif self.difficulty == 2:
+            return ai_logic.get_action_level2(self, player)
+        elif self.difficulty == 3:
+            return ai_logic.get_action_level3(self, player)
+    
 ## Change turn
 ## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
@@ -146,21 +137,9 @@ class Board():
         else:
             self.turn = 0
         
-        if self.difficulty== 1 and self.turn == 1:
-            action = AI.get_action_level1(self,0)
+        if(self.turn == 1 and self.difficulty != 0):
+            action = self.get_action(self.players[1])
             self.apply_action(action)
-            print(action)
-            # add run_action() here
-        if self.difficulty == 2 and self.turn == 1:
-            action = AI.get_action_level2(self,0)
-            self.apply_action(action)
-            print(action)
-            # add run_action() here
-        if self.difficulty == 3 and self.turn == 1:
-            action = AI.get_action_level3(self,0)
-            self.apply_action(action, )
-            print(action)
-            # add run_action() here
 
         self.round +=1
 
