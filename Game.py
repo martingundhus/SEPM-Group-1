@@ -150,7 +150,7 @@ class PlayGameMode(GameMode):
         self.width = int((COLUMN_COUNT + EXTRA_WIDTH*2) * self.Board.grid_size)
         self.height = int((ROW_COUNT + EXTRA_HEIGHT*2) * self.Board.grid_size+100)
         size=(self.width,self.height)
-
+        self.background=pygame.image.load("assets/picture/background.jpg")
         pygame.init()
         self.screen=pygame.display.set_mode(size)
         pygame.display.set_caption('The UU game')
@@ -246,15 +246,18 @@ class PlayGameMode(GameMode):
                     print("invalid move")         
         ##cancel select
         if event.key==pygame.K_o:
-            self.Board.resetMove()
+            if self.Board.players[self.Board.turn].picked_up_stack!=None:
+                self.Board.resetMove()
         ##change turn
         if event.key==pygame.K_p:
-            self.Board.changeTurn()
+            if self.Board.players[self.Board.turn].picked_up_stack!=None:
+                self.Board.changeTurn()
 
 
     def render(self,screen):
         # Render game state
         self.screen.fill(Background)
+        self.screen.blit(self.background,(0,0))
         self.Board.draw(self.screen)
         self.selection.draw(self.screen)
         self.draw_instructions()
@@ -269,7 +272,7 @@ class PlayGameMode(GameMode):
             xPos=xPos+self.Board.grid_size*7+30
         
         font = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 20)
-        text = font.render('W,A,S,D: move', True, Text_color, Background)
+        text = font.render('W,A,S,D: move', True, Text_color)
         textRect = text.get_rect()
         textRect.topleft = (xPos, yPos+i)
         self.screen.blit(text, textRect)
@@ -277,38 +280,38 @@ class PlayGameMode(GameMode):
 
         if self.Board.players[self.Board.turn].picked_up_stack!=None:
             
-            text=font.render("L: place stack", True, Text_color, Background)
+            text=font.render("L: place stack", True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)
             i=i+30
 
-            text=font.render("O: cancel select stack", True, Text_color, Background)
+            text=font.render("O: cancel select stack", True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)
             i=i+30
 
-            text=font.render("P: turn over", True, Text_color, Background)
+            text=font.render("P: turn over", True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)
             i=i+30
 
         else:
-            text = font.render('J: place flat', True, Text_color, Background)
+            text = font.render('J: place flat', True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)
             i=i+30
 
-            text = font.render('K: place standing', True, Text_color, Background)
+            text = font.render('K: place standing', True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)
             i=i+30
 
-            text=font.render("L: select stack", True, Text_color, Background)
+            text=font.render("L: select stack", True, Text_color)
             textRect = text.get_rect()
             textRect.topleft = (xPos, yPos+i)
             self.screen.blit(text, textRect)

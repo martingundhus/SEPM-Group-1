@@ -86,12 +86,18 @@ class Board():
                 self.tiles[y,x].draw(screen)
 
         if self.turn==1:
-            self.turn_Icon=Image("assets/picture/red_flat_stone.png")
+            self.turn_Icon=Image("assets/picture/redIcon_redStone.png")
         else:
-            self.turn_Icon=Image("assets/picture/blue_flat_stone.png")
+            self.turn_Icon=Image("assets/picture/blueIcon_blueStone.png")
         
-        center_X=self.grid_size *4
-        self.turn_Icon.set_position(center_X,10)
+        if self.round==0:
+            self.turn_Icon=Image("assets/picture/blueIcon_redStone.png")
+        if self.round==1:
+            self.turn_Icon=Image("assets/picture/redIcon_blueStone.png")
+            
+        self.turn_Icon.set_flip()
+        center_X=self.grid_size *4-20
+        self.turn_Icon.set_position(center_X,0)
         self.turn_Icon.draw(screen)
 
     def draw(self,screen):

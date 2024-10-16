@@ -9,6 +9,7 @@ class Image():
     
     def set_position(self,x,y):
         self.rect.topleft=x,y
-    
+    def set_flip(self):
+        self.img=pygame.transform.flip(self.img, True, False) 
     def draw(self,screen):
         screen.blit(self.img,self.rect)
