@@ -1,4 +1,4 @@
-from collections import deque
+
 import stone
 
 class Stack:
