@@ -101,7 +101,7 @@ def get_action_level3(board, player):
     return best_move
 
 
-# Converts the Boa
+# Converts the Board
 def convert_board_to_ai_board(board):
     new_board = board_ai.Board()
 
