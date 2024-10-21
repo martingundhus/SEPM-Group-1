@@ -240,7 +240,7 @@ class PlayGameMode(GameMode):
                         self.selection.set_invalid_color()
                         print("invalid move")
             else:
-                if(self.Board.moveStack(y,x)):
+                if(self.Board.moveStack(x,y)):
                     print("move stack")
                 else:
                     print("invalid move")         
