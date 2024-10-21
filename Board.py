@@ -249,7 +249,7 @@ class Board():
             return False
 
 
-    def isValidMove(self, xFrom, xTo, yFrom, yTo):
+    def isValidMove(self, xTo, yTo):
         if (self.getStack(xTo, yTo).stackable):
            return True
 
@@ -275,7 +275,7 @@ class Board():
 
     def moveStack(self, xTo, yTo):
        
-        if (self.isValidMove(self.current_x, self.current_y, xTo, yTo)):
+        if (self.isValidMove(xTo, yTo)):
             if (self.direction == "none"): #If first move direction has to be set
                 if (self.current_x > xTo and self.current_y == yTo):
                     self.direction = "left"
