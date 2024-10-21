@@ -219,9 +219,6 @@ class PlayGameMode(GameMode):
     def __init__(self,ui,dificulty):
         self.ui = ui
         self.running = True
-        self.player1 = Player.Player(0,21)
-        self.player2 = Player.Player(1,21)
-        
         
         self.Board=Board.Board(5,dificulty,(int(170),int(100)))
         self.selection=graphic.select()
