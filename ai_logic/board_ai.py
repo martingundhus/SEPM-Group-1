@@ -505,7 +505,7 @@ class Board:
         self.apply_action(action, 1)
         self.turns += 1
 
-    def generate_stone_combinations(self, stones_to_distribute, max_distance, allow_zero_at_first_step=True):
+    def generate_stone_combinations(self, stones_to_distribute, max_distance, allow_zero_at_first_step):
         """
         Generate all valid combinations of how to distribute stones over a given maximum distance.
         Example: If there are 2 stones and you can move 3 steps, you can leave [1, 1], [0, 1, 1], [0, 2] or [2] stones behind.
@@ -515,20 +515,30 @@ class Board:
         # Base case: If only one stone, it can only be left behind in one place
         if stones_to_distribute == 1:
             return [[1]]
+        
+        if stones_to_distribute == 0:
+            return [[0]]
 
         start_range = 0 if allow_zero_at_first_step else 1
 
         # Generate combinations based on the available distance
         for i in range(start_range, stones_to_distribute + 1):
+            remaining = stones_to_distribute - i
+
             if max_distance > 1:
-                remaining = stones_to_distribute - i
                 if remaining > 0:
                     for rest in self.generate_stone_combinations(remaining, max_distance - 1, allow_zero_at_first_step=False):
-                        combinations.append([i] + rest)
+                        combination = [i] + rest
+                        if len(combination) > 1:
+                            combinations.append(combination)
+                        # combinations.append([i] + rest)
                 else:
-                    combinations.append([i])
+                    if i != stones_to_distribute:  # Exclude the case where i == stones_to_distribute (like [4])
+                        combinations.append([i])
+
             else:
-                combinations.append([stones_to_distribute])  # If only one step allowed, leave all stones here
+                if stones_to_distribute != i:  # Prevent adding [stones_to_distribute] when i == stones_to_distribute
+                    combinations.append([0, stones_to_distribute])  # If only one step allowed, leave all stones here
 
         return combinations
 
@@ -601,7 +611,10 @@ class Board:
                         if height > 1:
                             # For each direction and max distance, calculate stone combinations
                             for direction, max_distance in travel_paths:
-                                for stones_left_behind in self.generate_stone_combinations(height - 1, max_distance):
+                                for stones_left_behind in self.generate_stone_combinations(height, max_distance, allow_zero_at_first_step=True):
+                                    if len(stones_left_behind) == 1:
+                                        raise ValueError("Invalid move: stones_left_behind cannot contain only 1 element")
+
                                     valid_moves.append(["move", (row, col), direction, stones_left_behind])
 
                         else:
@@ -616,5 +629,8 @@ class Board:
             # TODO : end of the game - merge winning conditions ?
             print("No valid moves")
             pass
+
+        # Filter out invalid "move" moves with an empty list as the last element
+        valid_moves = [move for move in valid_moves if not (move[0] == "move" and not move[3])]
         return valid_moves
 

@@ -47,7 +47,8 @@ def minimax(board, depth, is_maximizing, alpha, beta, is_first_move):
 # Function to simulate a move and return a new board state
 def simulate_move(board, move, owner):
     new_board = deepcopy(board)  # Deep copy the board to simulate the move
-    new_board.apply_action(move, owner)  # Apply the move
+    move_copy = deepcopy(move)  # Deep copy the move to prevent in-place modifications
+    new_board.apply_action(move_copy, owner)  # Apply the move
     return new_board
 
 # AI action selection for different levels
