@@ -1,5 +1,5 @@
 import itertools
-import ai_logic
+import ai_logic.ai_logic as ai_logic
 
 COL = 5
 ROW = 5

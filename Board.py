@@ -1,5 +1,4 @@
 
-import ai_logic.ai_logic as ai_logic
 import stone
 import stack
 import Player
@@ -68,22 +67,22 @@ class Board():
     def init_grid(self):
             orig_x,orig_y=self.position
             self.tiles=np.empty((5,5),dtype=tile)
-            for y in range(5):
-                for x in range(5):
+            for x in range(5):
+                for y in range(5):
                     index=int((x+y)%2)
                     if index==0:
-                        self.tiles[y,x]=tile("assets/picture/white_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
+                        self.tiles[x,y]=tile("assets/picture/white_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
                                                                                 orig_y+Board.offset_y+y*Board.grid_size))
                     elif index==1:
-                        self.tiles[y,x]=tile("assets/picture/brown_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
+                        self.tiles[x,y]=tile("assets/picture/brown_grid.png",(orig_x+Board.offset_x+x*Board.grid_size,
                                                                                 orig_y+Board.offset_y+y*Board.grid_size))
     
 
     def draw_board(self,screen):
         self.img_board.draw(screen)
-        for y in range(5):
-            for x in range(5):
-                self.tiles[y,x].draw(screen)
+        for x in range(5):
+            for y in range(5):
+                self.tiles[x,y].draw(screen)
 
         if self.turn==1:
             self.turn_Icon=Image("assets/picture/redIcon_redStone.png")
@@ -119,6 +118,10 @@ class Board():
     def hasSelected(self):
         return (self.picked_up_stack.height() > 0)
     
+    # Returns true if it is the AIs turn to make a move
+    def isAiTurn(self):
+        return self.difficulty > 0 and self.turn == 1
+    
 
     # Returns the action chosen by the AI agent
     def get_action(self, player):
@@ -128,7 +131,8 @@ class Board():
             return ai_logic.get_action_level2(self, player)
         elif self.difficulty == 3:
             return ai_logic.get_action_level3(self, player)
-    
+
+
 ## Change turn
 ## If user plays against AI, game mode > 0, and an AI action is requested
     def changeTurn(self):
@@ -143,11 +147,17 @@ class Board():
         else:
             self.turn = 0
         
-        if(self.turn == 1 and self.difficulty != 0):
-            action = self.get_action(self.players[1])
-            self.apply_action(action)
-
         self.round +=1
+
+    #preforms an ai turn
+    def do_ai_turn(self):
+        #only add delay to AI for easy dificulty
+        if(self.difficulty == 1):
+            pygame.time.wait(1000)
+            
+        action = self.get_action(self.players[1])
+        print(action)
+        self.apply_action(action)
 
     ## applies the action, if is_test==True the game state variables such as turn will not update, allowing ai to place multiple times in a row
     def apply_action(self, action):
@@ -283,10 +293,10 @@ class Board():
                     self.direction = "up"
             if self.current_x == xTo and self.current_y == yTo:  # Allows player to place multiple stones without moving
                 self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
-            elif self.direction == "up" and self.current_y < yTo and self.current_x == xTo or \
-            self.direction == "down" and self.current_y > yTo and self.current_x == xTo or \
-            self.direction == "left" and self.current_x > xTo and self.current_y == yTo or \
-            self.direction == "right" and self.current_x < xTo and self.current_y == yTo:
+            elif self.direction == "up" and (yTo-self.current_y == -1) and self.current_x == xTo or \
+            self.direction == "down" and (yTo-self.current_y == 1) and self.current_x == xTo or \
+            self.direction == "left" and (xTo-self.current_x == -1) and self.current_y == yTo or \
+            self.direction == "right" and (xTo-self.current_x == 1) and self.current_y == yTo:
                 self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
 
             # Update position based on direction

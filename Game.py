@@ -214,7 +214,7 @@ class PlayGameMode(GameMode):
 
         if event.key==pygame.K_j:
              if event.key == pygame.K_j:
-                x, y = self.selection.get_selection_pos()
+                y, x = self.selection.get_selection_pos()
                 if self.Board.placeStone(x, y, False):
                     self.Board.find_winner()
                 else:
@@ -222,7 +222,7 @@ class PlayGameMode(GameMode):
                     print("Invalid move")
 
         if event.key==pygame.K_k:
-            x, y = self.selection.get_selection_pos()
+            y, x = self.selection.get_selection_pos()
             if self.Board.placeStone(x, y, True):
                 self.Board.find_winner()   
                 
@@ -231,7 +231,7 @@ class PlayGameMode(GameMode):
                 print("Invalid move")
                 
         if event.key==pygame.K_l:
-            x,y = self.selection.get_selection_pos()
+            y,x = self.selection.get_selection_pos()
             if (not self.Board.isMove):
                 if (self.Board.getStack(x,y).height()) > 0:
                     if(self.Board.pickUpStack(x,y)):
@@ -261,8 +261,14 @@ class PlayGameMode(GameMode):
         self.Board.draw(self.screen)
         self.selection.draw(self.screen)
         self.draw_instructions()
-
         pygame.display.update()
+
+    
+    def update(self):
+        if self.Board.isAiTurn():
+            # If it is the AIs turn to make a move
+            self.Board.do_ai_turn()
+    
     
     def draw_instructions(self):
         i=0
@@ -382,11 +388,13 @@ class UserInterface():
                 self.overlayGameMode.processInput()
             elif self.playGameMode is not None:
                 self.playGameMode.processInput()
+                
                     
             # Render game (if any), and then the overlay (if active)
             if self.playGameMode is not None:
                 self.playGameMode.render(self.window)
                 self.playGameMode.check_winner()
+                self.playGameMode.update()
             else:
                 self.window.fill((0,0,0))
             if self.currentActiveMode == 'Overlay':
