@@ -293,8 +293,8 @@ class Board():
                     self.direction = "up"
             if self.current_x == xTo and self.current_y == yTo:  # Allows player to place multiple stones without moving
                 self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
-            elif self.direction == "up" and (yTo-self.current_y == -1) and self.current_x == xTo or \
-            self.direction == "down" and (yTo-self.current_y == 1) and self.current_x == xTo or \
+            elif self.direction == "up" and (yTo-self.current_y == 1) and self.current_x == xTo or \
+            self.direction == "down" and (yTo-self.current_y == -1) and self.current_x == xTo or \
             self.direction == "left" and (xTo-self.current_x == -1) and self.current_y == yTo or \
             self.direction == "right" and (xTo-self.current_x == 1) and self.current_y == yTo:
                 self.players[self.turn].picked_up_stack.drop_stone(self.getStack(xTo, yTo))
