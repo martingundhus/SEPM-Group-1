@@ -19,6 +19,7 @@ EXTRA_HEIGHT=1
 Background = (197, 209, 235)
 Blue = (146, 175, 215)
 Text_color = (45, 45, 42)
+BLACK = (0, 0, 0)
 
 ###############################################################################
 #                                Game Modes                                   #
@@ -48,6 +49,10 @@ class MenuGameMode(GameMode):
                 'action': lambda: self.ui.setGameMode('AI')
             },
             {
+                'title': 'Instructions',
+                'action': lambda: self.ui.setGameMode('Instructions')
+            },
+            {
                 'title': 'Quit',
                 'action': lambda: self.ui.quitGame()
             }
@@ -58,6 +63,80 @@ class MenuGameMode(GameMode):
         # Loop properties
         self.clock = pygame.time.Clock()
         self.running = True
+
+         
+    # Popup function to display instructions
+    def display_instructions(self,window):
+        popup_width = 700
+        popup_height = 670
+        popup_x = (window.get_width() - popup_width) // 2
+        popup_y = (window.get_height() - popup_height) // 2
+
+        font_title = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 36)
+        font_subtitle = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf', 22)
+        font_body = pygame.font.Font('assets/fonts/Oswald-VariableFont_wght.ttf',   16)
+        
+        # Create popup surface
+        popup_surface = pygame.Surface((popup_width, popup_height))
+        popup_surface.fill(Background)
+        
+        # Draw border
+        pygame.draw.rect(popup_surface, BLACK, popup_surface.get_rect(), 5)
+        
+        # Render the instruction message layout
+        title_text = font_title.render("How to play the UU-Game", True, Text_color)
+        popup_surface.blit(title_text, (30, 20))
+
+        # Sections and rules
+        section_titles = ["Objective:", "Stones:", "Moving Stones:", "Turns:", "Winning:"]
+        section_texts = [
+            "Be the first to connect your stones from one side of the board to the other.\n "
+            "The path can twist and turn, but diagonal connections don’t count.\n "
+            "All stones in the winning line have to be flat.",
+            
+            "Each player has 21 stones.\n"
+            "Stones can be placed flat or standing, on an empty tile or on top of flat stones.\n"
+            "Flat stones placed on top of each other make a stack.\n"
+            "Stones can never be placed on top of standing stones.",
+            
+            "You can move stones and stacks if the top stone is yours.\n"
+            "When moving a stack, you must drop at least one stone per tile moved.\n"
+            "Stacks move in straight lines.",
+            
+            "First Move: Each player starts by placing one of their opponent's stones.\n"
+            "On each turn, players either place a stone or move an existing stone/stack.",
+            
+            "The game ends when one player connects a line across the board.\n"
+            "If no line is made, the player with the most top stones wins."
+        ]
+
+        # Display section titles and text
+        y_offset = 80
+        for i, title in enumerate(section_titles):
+            section_title = font_subtitle.render(title, True, BLACK)
+            section_text = font_body.render(section_texts[i], True, BLACK)
+            
+            popup_surface.blit(section_title, (30, y_offset))
+            y_offset += 30
+            for line in section_texts[i].split('\n'):
+                section_text = font_body.render(line, True, BLACK)
+                popup_surface.blit(section_text, (40, y_offset))
+                y_offset += 30
+
+        # Display popup
+        window.blit(popup_surface, (popup_x, popup_y))
+        pygame.display.update()
+
+        # Wait for the user to close the popup
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                    waiting = False
+    
 
     def difficultySelection(self):
         # Menu items
@@ -179,6 +258,8 @@ class PlayGameMode(GameMode):
         # Keep the pop-up on the screen for 3 seconds
         time.sleep(3)
 
+    
+
     def check_winner(self):
         if(self.Board.winner_found):
             if self.Board.winner == 0:
@@ -243,6 +324,7 @@ class PlayGameMode(GameMode):
                 if(self.Board.moveStack(x,y)):
                     print("move stack")
                 else:
+                    self.selection.set_invalid_color()
                     print("invalid move")         
         ##cancel select
         if event.key==pygame.K_o:
@@ -357,6 +439,8 @@ class UserInterface():
                 self.currentActiveMode = 'Play'
             if(gameMode == 'AI'):
                 self.overlayGameMode.difficultySelection()
+            if(gameMode == 'Instructions'):
+                self.overlayGameMode.display_instructions(self.window)
             if(gameMode == 'easy'):
                 self.playGameMode = PlayGameMode(self,1)
                 self.currentActiveMode = 'Play'
@@ -368,8 +452,7 @@ class UserInterface():
                 self.playGameMode = PlayGameMode(self,3)
                 self.currentActiveMode = 'Play'
             
-            
-    
+       
     
     def showGame(self):
         if self.playGameMode is not None:

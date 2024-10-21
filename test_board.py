@@ -139,6 +139,54 @@ class TestBoard(unittest.TestCase):
 
         self.assertEqual(self.board.turn, 0, "Should be turn 0")
 
+    def test_apply_move_down(self):
+        self.board = Board.Board(board_size=5, dificulty=0)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(4,4,False)
+        action = ['move', (0, 0), 0, [1, 1, 1, 1]]
+        self.board.apply_action(action)
+
+        self.assertEqual(self.board.getStack(0,0).height(),1)
+        self.assertEqual(self.board.getStack(0,1).height(),1)
+        self.assertEqual(self.board.getStack(0,2).height(),1)
+        self.assertEqual(self.board.getStack(0,3).height(),1)
+
+    def test_apply_move_left(self):
+        self.board = Board.Board(board_size=5, dificulty=0)
+        self.board.placeStone(4,4,False)
+        self.board.placeStone(4,4,False)
+        self.board.placeStone(4,4,False)
+        self.board.placeStone(4,4,False)
+        self.board.placeStone(0,0,False)
+        action = ['move', (4, 4), 2, [1, 1, 1, 1]]
+        self.board.apply_action(action)
+
+        self.assertEqual(self.board.getStack(4,4).height(),1)
+        self.assertEqual(self.board.getStack(3,4).height(),1)
+        self.assertEqual(self.board.getStack(2,4).height(),1)
+        self.assertEqual(self.board.getStack(1,4).height(),1)
+        self.assertEqual(self.board.getStack(0,4).height(),0)
+        
+    
+    def test_apply_move_different_steps_right(self):
+        self.board = Board.Board(board_size=5, dificulty=0)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(0,0,False)
+        self.board.placeStone(4,4,False)
+        action = ['move', (0, 0), 3, [0,2,3]]
+        self.board.apply_action(action)
+
+        self.assertEqual(self.board.getStack(0,0).height(),0)
+        self.assertEqual(self.board.getStack(1,0).height(),2)
+        self.assertEqual(self.board.getStack(2,0).height(),3)
+        self.assertEqual(self.board.getStack(3,0).height(),0)
+
         
 if __name__ == "__main__":
     unittest.main() 

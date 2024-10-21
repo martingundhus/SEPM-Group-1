@@ -3,7 +3,7 @@ import Board
 import ai_logic.ai_logic as ai_logic
 import ai_logic.board_ai as ai_board
 
-class TestBoard(unittest.TestCase):
+class TestCopyBoard(unittest.TestCase):
     def test_copy_empty(self):
         board = Board.Board(board_size=5, dificulty=0)
         new_board = ai_logic.convert_board_to_ai_board(board)
