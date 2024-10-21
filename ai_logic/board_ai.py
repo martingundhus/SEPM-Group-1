@@ -73,18 +73,18 @@ class Board:
                 if top_stone is not None and top_stone.owner == player and top_stone.orientation == 1:
                     # Count how many opponent stones are adjacent that this blocks
                     if row > 0 and self.get_top_stone(row - 1, col) is not None and self.get_top_stone(row - 1, col).owner == opponent:
-                        block_score += 5  # Example block score
+                        block_score += 2  # Example block score
                     if row < ROW - 1 and self.get_top_stone(row + 1, col) is not None and self.get_top_stone(row + 1, col).owner == opponent:
-                        block_score += 5
+                        block_score += 2
                     if col > 0 and self.get_top_stone(row, col - 1) is not None and self.get_top_stone(row, col - 1).owner == opponent:
-                        block_score += 5
+                        block_score += 2
                     if col < COL - 1 and self.get_top_stone(row, col + 1) is not None and self.get_top_stone(row, col + 1).owner == opponent:
-                        block_score += 5
+                        block_score += 2
         return block_score
 
     def evaluate_mobility(self, player):
         valid_moves = self.get_valid_moves(player)
-        return len(valid_moves) * 2
+        return len(valid_moves)/10
     
     def evaluate_proximity_to_win(self, player):
         prox_score = 0
@@ -99,14 +99,14 @@ class Board:
             rowx = [x for x in top_stones if x[0]==row]
             if row+1 < ROW and len(rowx)!= 0:
                 rowx += [x for x in top_stones if x[0] == row+1 and x[1] not in {x[1] for x in rowx}]
-            prox_score += len(rowx)**2
+            prox_score += len(rowx)**3
 
         for col in range(COL):
             colx = []
             colx = [x for x in top_stones if x[1]==col]
             if col+1 < COL and len(colx)!= 0:
                 colx += [x for x in top_stones if x[1] == col+1 and x[0] not in {x[0] for x in colx}]
-            prox_score += len(colx)**2
+            prox_score += len(colx)**3
         
         return prox_score
 
@@ -485,9 +485,9 @@ class Board:
 
     # Returns the action chosen by the AI agent
     def get_action(self, player):
-        moves = self.get_valid_moves(player)
+        # moves = self.get_valid_moves(player)
         if self.level == 1:
-            return ai_logic.get_action_level1(moves)
+            return ai_logic.get_action_level1(self, player)
         elif self.level == 2:
             return ai_logic.get_action_level2(self, player)
         elif self.level == 3:
@@ -606,7 +606,7 @@ class Board:
 
                         else:
                             for direction, _ in travel_paths:
-                                valid_moves.append(["move", (row, col), direction, []])
+                                valid_moves.append(["move", (row, col), direction, [0, 1]])
 
                     if self.get_top_stone(row, col).orientation == 0 and pieces_left > 0:
                         valid_moves.append(["place", (row, col), 0])
