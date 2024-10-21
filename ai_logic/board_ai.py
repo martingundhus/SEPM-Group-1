@@ -505,7 +505,7 @@ class Board:
         self.apply_action(action, 1)
         self.turns += 1
 
-    def generate_stone_combinations(self, stones_to_distribute, max_distance, allow_zero_at_first_step=True):
+    def generate_stone_combinations(self, stones_to_distribute, max_distance, allow_zero_at_first_step):
         """
         Generate all valid combinations of how to distribute stones over a given maximum distance.
         Example: If there are 2 stones and you can move 3 steps, you can leave [1, 1], [0, 1, 1], [0, 2] or [2] stones behind.
@@ -515,13 +515,17 @@ class Board:
         # Base case: If only one stone, it can only be left behind in one place
         if stones_to_distribute == 1:
             return [[1]]
+        
+        if stones_to_distribute == 0:
+            return [[0]]
 
         start_range = 0 if allow_zero_at_first_step else 1
 
         # Generate combinations based on the available distance
         for i in range(start_range, stones_to_distribute + 1):
+            remaining = stones_to_distribute - i
+
             if max_distance > 1:
-                remaining = stones_to_distribute - i
                 if remaining > 0:
                     for rest in self.generate_stone_combinations(remaining, max_distance - 1, allow_zero_at_first_step=False):
                         combinations.append([i] + rest)
@@ -530,6 +534,8 @@ class Board:
             else:
                 combinations.append([stones_to_distribute])  # If only one step allowed, leave all stones here
 
+        if combinations == []:
+            combinations.append([stones_to_distribute])
         return combinations
 
     def check_travel_paths(self, height, row, col):    
@@ -601,7 +607,10 @@ class Board:
                         if height > 1:
                             # For each direction and max distance, calculate stone combinations
                             for direction, max_distance in travel_paths:
-                                for stones_left_behind in self.generate_stone_combinations(height - 1, max_distance):
+                                for stones_left_behind in self.generate_stone_combinations(height - 1, max_distance, allow_zero_at_first_step=True):
+                                    if stones_left_behind == []:
+                                        print(stones_left_behind)
+
                                     valid_moves.append(["move", (row, col), direction, stones_left_behind])
 
                         else:
