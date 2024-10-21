@@ -176,18 +176,23 @@ class Board():
         direction = action[2]
         placements = action[3]
         self.pickUpStack(col,row)
+
+        
+        ## loop through all tiles
         for placement in placements:
             for i in range(placement):
                 self.moveStack(col,row)
             # move x,y to next position according to direction
             if direction == 0: #down
-                row -= 1
-            if direction == 1: # up
                 row += 1
+            if direction == 1: # up
+                row -= 1
             if direction == 2: #left
                 col -= 1
             if direction == 3: #right
                 col += 1
+            
+            
         
     def getStack(self, x, y):
         return self.tiles[x][y].stack
@@ -245,19 +250,8 @@ class Board():
 
 
     def isValidMove(self, xFrom, xTo, yFrom, yTo):
-        if (self.getStack(yFrom, yTo).stackable):
-            if (xFrom > xTo):
-                if (self.checkLeft(xFrom, yFrom)):
-                     return True
-            else:
-                if (self.checkRight(xFrom, yFrom)):
-                     return True
-            if (yFrom > yTo):
-                if (self.checkDown(xFrom, yFrom)):
-                     return True
-            else:
-                if (self.checkUp(xFrom, yFrom)):
-                     return True
+        if (self.getStack(xTo, yTo).stackable):
+           return True
 
     def pickUpStack(self, x, y):        
         
@@ -312,6 +306,7 @@ class Board():
                 self.players[self.turn].picked_up_stack = None
                 self.changeTurn()
                 self.isMove = False
+                
             self.error_message = ""
             return True
         else:

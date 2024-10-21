@@ -243,6 +243,7 @@ class PlayGameMode(GameMode):
                 if(self.Board.moveStack(x,y)):
                     print("move stack")
                 else:
+                    self.selection.set_invalid_color()
                     print("invalid move")         
         ##cancel select
         if event.key==pygame.K_o:
