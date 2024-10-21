@@ -47,7 +47,8 @@ def minimax(board, depth, is_maximizing, alpha, beta, is_first_move):
 # Function to simulate a move and return a new board state
 def simulate_move(board, move, owner):
     new_board = deepcopy(board)  # Deep copy the board to simulate the move
-    new_board.apply_action(move, owner)  # Apply the move
+    move_copy = deepcopy(move)  # Deep copy the move to prevent in-place modifications
+    new_board.apply_action(move_copy, owner)  # Apply the move
     return new_board
 
 # AI action selection for different levels
@@ -73,7 +74,6 @@ def get_action_level2(old_board, player):
         is_first_move = True
 
     for move in board.get_valid_moves(piece_color):
-        # print("Move: ", move)
         new_board = simulate_move(board, move, 1)
         score = minimax(new_board, depth=1, is_maximizing= not bool(player), alpha=-math.inf, beta=math.inf, is_first_move=is_first_move)
         if score > best_score:

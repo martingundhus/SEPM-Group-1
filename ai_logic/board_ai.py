@@ -528,14 +528,18 @@ class Board:
             if max_distance > 1:
                 if remaining > 0:
                     for rest in self.generate_stone_combinations(remaining, max_distance - 1, allow_zero_at_first_step=False):
-                        combinations.append([i] + rest)
+                        combination = [i] + rest
+                        if len(combination) > 1:
+                            combinations.append(combination)
+                        # combinations.append([i] + rest)
                 else:
-                    combinations.append([i])
-            else:
-                combinations.append([stones_to_distribute])  # If only one step allowed, leave all stones here
+                    if i != stones_to_distribute:  # Exclude the case where i == stones_to_distribute (like [4])
+                        combinations.append([i])
 
-        if combinations == []:
-            combinations.append([stones_to_distribute])
+            else:
+                if stones_to_distribute != i:  # Prevent adding [stones_to_distribute] when i == stones_to_distribute
+                    combinations.append([0, stones_to_distribute])  # If only one step allowed, leave all stones here
+
         return combinations
 
     def check_travel_paths(self, height, row, col):    
@@ -607,9 +611,9 @@ class Board:
                         if height > 1:
                             # For each direction and max distance, calculate stone combinations
                             for direction, max_distance in travel_paths:
-                                for stones_left_behind in self.generate_stone_combinations(height - 1, max_distance, allow_zero_at_first_step=True):
-                                    if stones_left_behind == []:
-                                        print(stones_left_behind)
+                                for stones_left_behind in self.generate_stone_combinations(height, max_distance, allow_zero_at_first_step=True):
+                                    if len(stones_left_behind) == 1:
+                                        raise ValueError("Invalid move: stones_left_behind cannot contain only 1 element")
 
                                     valid_moves.append(["move", (row, col), direction, stones_left_behind])
 
@@ -625,5 +629,8 @@ class Board:
             # TODO : end of the game - merge winning conditions ?
             print("No valid moves")
             pass
+
+        # Filter out invalid "move" moves with an empty list as the last element
+        valid_moves = [move for move in valid_moves if not (move[0] == "move" and not move[3])]
         return valid_moves
 
