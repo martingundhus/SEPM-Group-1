@@ -74,7 +74,7 @@ def get_action_level2(old_board, player):
 
     for move in board.get_valid_moves(piece_color):
         new_board = simulate_move(board, move, 1)
-        score = minimax(new_board, depth=2, is_maximizing= not bool(player), alpha=-math.inf, beta=math.inf, is_first_move=is_first_move)
+        score = minimax(new_board, depth=1, is_maximizing= not bool(player), alpha=-math.inf, beta=math.inf, is_first_move=is_first_move)
         if score > best_score:
             best_score = score
             best_move = move
@@ -94,7 +94,7 @@ def get_action_level3(board, player):
     
     for move in board.get_valid_moves(piece_color):
         new_board = simulate_move(board, move, 1)
-        score = minimax(new_board, depth=4, is_maximizing= not bool(player), alpha=-math.inf, beta=math.inf, is_first_move=is_first_move)
+        score = minimax(new_board, depth=2, is_maximizing= not bool(player), alpha=-math.inf, beta=math.inf, is_first_move=is_first_move)
         if score > best_score:
             best_score = score
             best_move = move
